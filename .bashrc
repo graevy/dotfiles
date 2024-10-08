@@ -69,7 +69,7 @@ sedd() {
 #alias troll='ls $@ -Ad . ..'
 
 # env vars
-if [ -f ~/.env ]; then
-    export $(grep -v '^#' ~/.env | xargs)
+if [ -f ~/.bashenv ]; then
+   source ~/.bashenv 
 fi
 
