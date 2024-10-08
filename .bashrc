@@ -69,10 +69,7 @@ sedd() {
 #alias troll='ls $@ -Ad . ..'
 
 # env vars
-export EDITOR="vim"
-export WWW_HOME="duckduckgo.com"
-export KUBECONFIG=~/code/controlplane/kubeconfig.yaml
-export ANDROID_HOME=$HOME/Android/Sdk
-export PATH=$PATH:$ANDROID_HOME/emulator
-export PATH=$PATH:$ANDROID_HOME/platform-tools
+if [ -f ~/.env ]; then
+    export $(grep -v '^#' ~/.env | xargs)
+fi
 
