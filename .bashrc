@@ -15,10 +15,10 @@ alias ~='cd ~'
 alias ..='cd ..'
 cs() { cd "$1" && la "${@:2}"; }
 mkcd() { mkdir -p $1 && cd $1; }
-alias cdt="cd $(mktemp -d)"
-alias please='sudo $(fc -ln -1)'
-alias rmv='mv "$@" /tmp'
-alias rmtmp='sudo rm -rf /tmp/* /tmp/.*'
+cdt() { cd $(mktemp -d); }
+please() { sudo $(fc -ln -1); }
+rmv() { mv "$@" /tmp; }
+rmtmp() { sudo rm -rf /tmp/* /tmp/.*; }
 
 # shortcuts
 alias s='git status'
@@ -47,9 +47,12 @@ alias cheat='curl cht.sh/$@'
 # esoteric tooling
 alias freeze='su -c "echo freeze > /sys/power/state"'
 alias rescan='nmcli d wifi list --rescan yes'
-alias ytdl="youtube-dl -f bestaudio --audio-quality 0 --embed-thumbnail -x --audio-format mp3 --add-metadata -o '%(title)s.%(ext)s'"
-alias ish="ssh -o StrictHostKeyChecking=no $@"
-alias icp="scp -o StrictHostKeyChecking=no $@"
+# deprecated; keeping for ytdlp documentation
+#alias ytdl="youtube-dl -f bestaudio --audio-quality 0 --embed-thumbnail -x --audio-format mp3 --add-metadata -o '%(title)s.%(ext)s'"
+alias ytdlp="yt-dlp -f bestaudio --add-metadata -o '%(title)s.%(ext)s'"
+ish() { ssh -o StrictHostKeyChecking=no $@; }
+icp() { scp -o StrictHostKeyChecking=no $@; }
+irc() { irssi -n ${NICKNAME:-$USER}; }
 sedd() {
   # sed debugger
   tf=`mktemp`
@@ -66,7 +69,7 @@ sedd() {
 }
 
 # :^)
-#alias troll='ls $@ -Ad . ..'
+#troll() { ls $@ -Ad . ..; }
 
 # env vars
 if [ -f ~/.bashenv ]; then
