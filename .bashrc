@@ -23,22 +23,20 @@ rmtmp() { sudo rm -rf /tmp/* /tmp/.*; }
 # shortcuts
 alias s='git status'
 alias d='git diff'
+alias c='git commit'
 alias ck='git checkout'
 alias k='kubectl'
 alias py='python'
 
 # X tooling
-alias xcl='xclip -sel c'
-gamma() {
-    # set the gamma value of each monitor i.e. "gamma 0.5" = extra screen dimming for 3am coding
-    xrandr --listactivemonitors | tail -n +2 | awk '{print $NF}' | while IFS= read -r line; do
-        xrandr --output $line --brightness "$1"
-    done
-}
+if [ -f ~/.bashxrc ]; then
+	source ~/.bashxrc
+fi
 
 # arch tooling
-alias update='sudo pacman -Syu'
-alias orphans='[[ -n $(pacman -Qdt) ]] && sudo pacman -Rs $(pacman -Qdtq) || echo "no orphans to remove"'
+if [ -f ~/.basharchrc ]; then
+	source ~/.basharchrc
+fi
 
 # web services. igor chubin <3
 alias wttr='curl -s wttr.in/seattle'
@@ -56,6 +54,7 @@ irc() { irssi -n ${NICKNAME:-$USER}; }
 sedd() {
   # sed debugger
   tf=`mktemp`
+  # this line runs "sed $@" and then redirects stderr to tee to debug sed
   command sed "$@" 2> >(tee $tf >&2)
   [[ "$?" == 1 ]] && grep -q . $tf && {
     echo "at: sed $@"
@@ -73,6 +72,6 @@ sedd() {
 
 # env vars
 if [ -f ~/.bashenv ]; then
-   source ~/.bashenv 
+	source ~/.bashenv 
 fi
 

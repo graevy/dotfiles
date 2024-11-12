@@ -1,0 +1,8 @@
+# X tooling
+alias xcl='xclip -sel c'
+gamma() {
+    # set the gamma value of each monitor i.e. "gamma 0.5" = extra screen dimming for 3am coding
+    xrandr --listactivemonitors | tail -n +2 | awk '{print $NF}' | while IFS= read -r line; do
+        xrandr --output $line --brightness "$1"
+    done
+}

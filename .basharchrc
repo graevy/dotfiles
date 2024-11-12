@@ -1,0 +1,3 @@
+# arch tooling
+alias update='sudo pacman -Syu'
+alias orphans='[[ -n $(pacman -Qdt) ]] && sudo pacman -Rs $(pacman -Qdtq) || echo "no orphans to remove"'
