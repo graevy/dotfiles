@@ -1,0 +1,6 @@
+
+[font]
+size = 14
+
+[general]
+import = ["~/.config/alacritty/themes/themes/graevy.toml"]

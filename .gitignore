@@ -5,12 +5,5 @@
 !/.bashxrc
 !/.basharchrc
 !/.xinitrc
-!/.gitconfig
 
-!/.config/alacritty/themes/themes/graevy.yaml
-!/.config/alacritty/themes/themes/graevy.toml
-!/.config/alacritty.yml
-!/.config/alacritty.toml
-
-!/.config/i3/config
-!/.config/i3status/config
+!/.config
