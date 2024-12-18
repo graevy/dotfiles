@@ -2,8 +2,5 @@
 /.*
 !/.gitignore
 !/.bashrc
-!/.bashxrc
-!/.basharchrc
-!/.xinitrc
 
 !/.config
