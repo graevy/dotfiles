@@ -23,7 +23,7 @@ set $menu dmenu_path | wmenu | xargs swaymsg exec --
 ### Output configuration
 #
 # Default wallpaper (more resolutions are available in /run/current-system/sw/share/backgrounds/sway/)
-output * bg /run/current-system/sw/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
+output * bg background.png tile
 #
 # Example configuration:
 #
@@ -58,8 +58,9 @@ output * bg /run/current-system/sw/share/backgrounds/sway/Sway_Wallpaper_Blue_19
 # You can get the names of your inputs by running: swaymsg -t get_inputs
 # Read `man 5 sway-input` for more information about this section.
 
-input "1739:52552:SYNA1D31:00_06CB:CD48_Mouse" {
+input "1739:52552:SYNA1D31:00_06CB:CD48_Touchpad" {
     accel_profile "flat"
+    natural_scroll enabled
 }
 
 ### Key bindings
@@ -211,5 +212,14 @@ bar {
     # The default just shows the current date and time.
     status_command i3status -c ~/.config/i3status/config
 }
+
+xwayland enable
+
+default_border none
+# keep borders in floating window mode only?
+#hide_edge_borders smart
+
+bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl set 0001
+bindsym XF86MonBrightnessUp exec --no-startup-id brightnessctl set +5%
 
 include /etc/sway/config.d/*
