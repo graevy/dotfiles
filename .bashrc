@@ -11,7 +11,6 @@ PS1='[\u\w]\$ '
 # bash "improvements"
 alias la='ls -ah --color=auto'
 alias l='ls -lahr --color=auto'
-alias ~='cd ~'
 alias ..='cd ..'
 cs() { cd "$1" && la "${@:2}"; }
 mkcd() { mkdir -p $1 && cd $1; }
