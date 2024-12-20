@@ -13,23 +13,16 @@ set $left h
 set $down j
 set $up k
 set $right l
-# Your preferred terminal emulator
 set $term alacritty
-# Your preferred application launcher
 # Note: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
 set $menu dmenu_path | wmenu | xargs swaymsg exec --
 
-### Output configuration
-#
-# Default wallpaper (more resolutions are available in /run/current-system/sw/share/backgrounds/sway/)
+# (more resolutions are available in /run/current-system/sw/share/backgrounds/sway/)
 output * bg background.png tile
-#
-# Example configuration:
-#
-#   output HDMI-A-1 resolution 1920x1080 position 1920,0
-#
+
 # You can get the names of your outputs by running: swaymsg -t get_outputs
+output HDMI-A-1 resolution 1920x1080 position 1920,0
 
 ### Idle configuration
 #
@@ -44,23 +37,20 @@ output * bg background.png tile
 # your displays after another 300 seconds, and turn your screens back on when
 # resumed. It will also lock your screen before your computer goes to sleep.
 
-### Input configuration
-#
-# Example configuration:
-#
-#   input "2:14:SynPS/2_Synaptics_TouchPad" {
-#       dwt enabled
-#       tap enabled
-#       natural_scroll enabled
-#       middle_emulation enabled
-#   }
-#
 # You can get the names of your inputs by running: swaymsg -t get_inputs
 # Read `man 5 sway-input` for more information about this section.
-
 input "1739:52552:SYNA1D31:00_06CB:CD48_Touchpad" {
     accel_profile "flat"
     natural_scroll enabled
+    dwt enabled
+    tap enabled
+    middle_emulation enabled
+}
+
+input "4809:8195:SOAI_USB_Gaming_Mouse" {
+    accel_profile "flat"
+    #calibration_matrix "1 0 0 0 1 0 0 0 0.3"
+    pointer_accel "-0.5"
 }
 
 ### Key bindings
@@ -201,7 +191,30 @@ mode "resize" {
 }
 bindsym $mod+r mode "resize"
 
-#
+
+# ceeriously styled i3
+set $bg     #151515
+set $fg     #404552
+set $hi     #fce94f
+set $ac     #4084d6
+set $tx     #2d323d
+set $ia     #9e9e9e
+set $be     #8faf9f
+set $yw     #f8f893
+set $gn     #81c181
+set $rd     #bf9b76
+set $id     #f9f8ff
+set $ce     #ceecee
+set $sl     #7f7f7f
+
+# set some nice colors      border  background  text    indicator
+client.focused              $ac     $ac         $tx     $id
+client.unfocused            $bg     $bg         $ia     $id
+client.focused_inactive     $bg     $bg         $ac     $id
+client.urgent               $ac     $ac         $tx     $id
+#border & indicator are ignored
+client.placeholder          $bg     $bg         $bg     $bg
+
 # Status Bar:
 #
 # Read `man 5 sway-bar` for more information about this section.
@@ -211,6 +224,16 @@ bar {
     # When the status_command prints a new line to stdout, swaybar updates.
     # The default just shows the current date and time.
     status_command i3status -c ~/.config/i3status/config
+    font NotoSansMono 12
+    colors {
+        background          $bg
+        statusline          $sl
+        separator           $tx
+        focused_workspace   $ia        $ia        $tx
+        active_workspace    $gn        $ac        $tx
+        inactive_workspace  $bg        $fg        $ia
+        urgent_workspace    $ac        $bg        $ac
+    }
 }
 
 xwayland enable
@@ -221,5 +244,14 @@ default_border none
 
 bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl set 0001
 bindsym XF86MonBrightnessUp exec --no-startup-id brightnessctl set +5%
+
+# i guess i3status interprets sigusr1 as a reload?
+set $refresh_i3status killall -SIGUSR1 i3status
+bindsym XF86AudioRaiseVolume exec --no-startup-id wpctl set-volume 53 1%+ && $refresh_i3status
+bindsym XF86AudioLowerVolume exec --no-startup-id wpctl set-volume 53 1%- && $refresh_i3status
+bindsym XF86AudioMute exec --no-startup-id wpctl set-mute 53 toggle && $refresh_i3status
+bindsym XF86AudioMicMute exec --no-startup-id wpctl set-mute 54 toggle && $refresh_i3status
+
+bindsym $mod+Mod1+L exec swaylock -c 000000
 
 include /etc/sway/config.d/*
