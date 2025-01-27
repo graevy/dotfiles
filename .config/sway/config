@@ -49,7 +49,6 @@ input "1739:52552:SYNA1D31:00_06CB:CD48_Touchpad" {
 
 input "4809:8195:SOAI_USB_Gaming_Mouse" {
     accel_profile "flat"
-    #calibration_matrix "1 0 0 0 1 0 0 0 0.3"
     pointer_accel "-0.5"
 }
 
@@ -223,8 +222,8 @@ bar {
 
     # When the status_command prints a new line to stdout, swaybar updates.
     # The default just shows the current date and time.
-    status_command i3status -c ~/.config/i3status/config
-    font NotoSansMono 12
+    status_command i3status-rs
+    font JetBrainsMono 12
     colors {
         background          $bg
         statusline          $sl

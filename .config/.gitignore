@@ -2,6 +2,7 @@
 /.*
 !/.gitignore
 !/alacritty
-!/i3status
+!/i3status-rust
 !/nvim
 !/sway
+!/rustmission

@@ -18,8 +18,10 @@ cdt() { cd $(mktemp -d); }
 please() { sudo $(fc -ln -1); }
 rmv() { mv "$@" /tmp; }
 rmtmp() { sudo rm -rf /tmp/* /tmp/.*; }
+yeet() { git add -A && git commit -m "${*:-yeet}" && git push;  }
 
 # shortcuts
+alias n='nvim'
 alias s='git status'
 alias d='git diff'
 alias c='git commit'
