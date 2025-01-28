@@ -18,7 +18,15 @@ cdt() { cd $(mktemp -d); }
 please() { sudo $(fc -ln -1); }
 rmv() { mv "$@" /tmp; }
 rmtmp() { sudo rm -rf /tmp/* /tmp/.*; }
-yeet() { git add -A && git commit -m "${*:-yeet}" && git push;  }
+yeet() {
+    git add -A && git commit && git push;
+}
+git() {
+    if [ -n "$GIT_CONFIG_GLOBAL" ]; then
+        echo "Using $GIT_CONFIG_GLOBAL"
+    fi
+    command git "$@"
+}
 
 # shortcuts
 alias n='nvim'
@@ -29,28 +37,15 @@ alias ck='git checkout'
 alias k='kubectl'
 alias py='python'
 
-# X tooling
-if [ -f ~/.bashxrc ]; then
-	source ~/.bashxrc
-fi
-
-# arch tooling
-if [ -f ~/.basharchrc ]; then
-	source ~/.basharchrc
-fi
-
-# web services. igor chubin <3
-alias wttr='curl -s wttr.in/seattle'
-alias cheat='curl cht.sh/$@'
-
 # esoteric tooling
 alias freeze='su -c "echo freeze > /sys/power/state"'
 alias rescan='nmcli d wifi list --rescan yes'
+alias wttr='curl -s wttr.in/seattle'
 # deprecated; keeping for ytdlp documentation
 #alias ytdl="youtube-dl -f bestaudio --audio-quality 0 --embed-thumbnail -x --audio-format mp3 --add-metadata -o '%(title)s.%(ext)s'"
 alias ytdlp="yt-dlp -f bestaudio --add-metadata -o '%(title)s.%(ext)s'"
-ish() { ssh -o StrictHostKeyChecking=no $@; }
-icp() { scp -o StrictHostKeyChecking=no $@; }
+ish() { ssh -o StrictHostKeyChecking=no "$@"; }
+icp() { scp -o StrictHostKeyChecking=no "$@"; }
 irc() { irssi -n ${NICKNAME:-$USER}; }
 sedd() {
   # sed debugger
@@ -71,8 +66,4 @@ sedd() {
 # :^)
 #troll() { ls $@ -Ad . ..; }
 
-# env vars
-if [ -f ~/.bashenv ]; then
-	source ~/.bashenv 
-fi
 
