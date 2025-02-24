@@ -19,23 +19,25 @@ please() { sudo $(fc -ln -1); }
 rmv() { mv "$@" /tmp; }
 rmtmp() { sudo rm -rf /tmp/* /tmp/.*; }
 yeet() {
-    git add -A && git commit && git push;
+  git add -A && git commit -m "${*:-yeet}" && git push
 }
 git() {
-    if [ -n "$GIT_CONFIG_GLOBAL" ]; then
-        echo "Using $GIT_CONFIG_GLOBAL"
-    fi
-    command git "$@"
+  if [ -n "$GIT_CONFIG_GLOBAL" ]; then
+    echo "Using $GIT_CONFIG_GLOBAL"
+  fi
+  command git "$@"
 }
 
 # shortcuts
 alias n='nvim'
+alias v='vim'
 alias s='git status'
 alias d='git diff'
 alias c='git commit'
 alias ck='git checkout'
 alias k='kubectl'
 alias py='python'
+alias wlc='wl-copy'
 
 # esoteric tooling
 alias freeze='su -c "echo freeze > /sys/power/state"'
@@ -49,15 +51,15 @@ icp() { scp -o StrictHostKeyChecking=no "$@"; }
 irc() { irssi -n ${NICKNAME:-$USER}; }
 sedd() {
   # sed debugger
-  tf=`mktemp`
+  tf=$(mktemp)
   # this line runs "sed $@" and then redirects stderr to tee to debug sed
   command sed "$@" 2> >(tee $tf >&2)
   [[ "$?" == 1 ]] && grep -q . $tf && {
     echo "at: sed $@"
     count=$(command sed -En 's/^.*char ([0-9]+).*$/\1/p' $tf | tail -n 1)
     [[ "$count" ]] && {
-       count=$(( $count + 8 + $(<<<"$@" grep -Eo "^(-\S+\s+)*" | wc -c) - 1 ))
-       yes ' ' | tr -d '\n' | head -c $count && echo '^'
+      count=$(($count + 8 + $(<<<"$@" grep -Eo "^(-\S+\s+)*" | wc -c) - 1))
+      yes ' ' | tr -d '\n' | head -c $count && echo '^'
     }
   } >&2
   rm $tf
@@ -65,5 +67,3 @@ sedd() {
 
 # :^)
 #troll() { ls $@ -Ad . ..; }
-
-
