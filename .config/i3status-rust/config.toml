@@ -21,15 +21,26 @@ volume_muted = "\uE002"
 backlight = "\uE00E"
 
 
+# display active networkmanager connections
 [[block]]
-block = "net"
-format = "$icon{$ssid $signal_strength $ip}"
+block = "custom"
+format = "{$icon|}$text.pango-str()"
+command = "nmcli -t -f NAME connection show --active | grep -v -x -E 'lo|docker0' | paste -s -d ' '"
+interval = 10
+hide_when_empty = true
 
 [[block]]
-block = "external_ip"
-format = "$ip $city"
-with_network_manager = true # enabled by default
-use_ipv4 = true
+block = "net"
+format = "$icon{$signal_strength$frequency $ip}"
+inactive_format = "$icon Down"
+interval = 3
+
+# not sure this is a good idea honestly
+#[[block]]
+#block = "external_ip"
+#format = "$ip $city"
+#with_network_manager = true # enabled by default
+#use_ipv4 = true
 
 [[block]]
 block = "load"
