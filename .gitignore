@@ -1,9 +1,19 @@
+# whitelist gitignore pattern
 /*
 /.*
 !/.gitignore
+
 !/.bashrc
 
-!/.config
-!/.local
+!.config
+!.local
+
+# as far as i can understand it:
+# by default git will not traverse subdirectories unless they contain the double asterisk
+# using this whitelist pattern, where the nested gitignores also have `*` and `.*`, subdir-traversing stops.
+# this just changes the default behavior of nested *blacklist* gitignores
+# also, just adding !.config/** will not unignore .config
+!.config/**
+!.local/**
 
 !/README.md
