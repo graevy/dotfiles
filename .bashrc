@@ -12,6 +12,9 @@ PS1='[\u\w]\$ '
 alias la='ls -ah --color=auto'
 alias l='ls -lahr --color=auto'
 alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
 cs() { cd "$1" && la "${@:2}"; }
 mkcd() { mkdir -p $1 && cd $1; }
 cdt() { cd $(mktemp -d); }
@@ -20,12 +23,6 @@ rmv() { mv "$@" /tmp; }
 rmtmp() { sudo rm -rf /tmp/* /tmp/.*; }
 yeet() {
   git add -A && git commit -m "${*:-yeet}" && git push
-}
-git() {
-  if [ -n "$GIT_CONFIG_GLOBAL" ]; then
-    echo "Using $GIT_CONFIG_GLOBAL"
-  fi
-  command git "$@"
 }
 
 # shortcuts
@@ -49,8 +46,9 @@ alias ytdlp="yt-dlp -f bestaudio --add-metadata -o '%(title)s.%(ext)s'"
 ish() { ssh -o StrictHostKeyChecking=no "$@"; }
 icp() { scp -o StrictHostKeyChecking=no "$@"; }
 irc() { irssi -n ${NICKNAME:-$USER}; }
+
+# sed debugger. don't ask
 sedd() {
-  # sed debugger
   tf=$(mktemp)
   # this line runs "sed $@" and then redirects stderr to tee to debug sed
   command sed "$@" 2> >(tee $tf >&2)
@@ -64,6 +62,10 @@ sedd() {
   } >&2
   rm $tf
 }
+
+# nix-specific tooling
+rebuild() { su -c 'nixos-rebuild switch --show-trace'; }
+nixnix() { su -c "nix-env --delete-generations +$@ --profile /nix/var/nix/profiles/system"; }
 
 # :^)
 #troll() { ls $@ -Ad . ..; }
