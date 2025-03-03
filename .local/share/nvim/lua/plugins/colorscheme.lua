@@ -22,9 +22,9 @@ return {
 			},
 			color_overrides = {
 				mocha = {
-					base = "#000000",
-					mantle = "#000000",
-					crust = "#000000",
+					base = "#101010",
+					mantle = "#101010",
+					crust = "#101010",
 				},
 			},
 			integrations = {
@@ -37,6 +37,12 @@ return {
 					color_mode = true,
 				},
 			},
+		},
+	},
+	{
+		"LazyVim/LazyVim",
+		opts = {
+			colorscheme = "catppuccin",
 		},
 	},
 }
