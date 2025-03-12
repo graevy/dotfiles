@@ -53,8 +53,16 @@ info_cpu = 20
 warning_cpu = 90
 
 [[block]]
+block = "temperature"
+format = "$icon$max"
+interval = 10
+
+[[block]]
 block = "memory"
-format = "$icon$mem_avail.eng(w:3) $swap_used"
+format = "$icon$mem_avail.eng(w:3)"
+# whenever nixpkgs merges i think it was commit 2043, that adds range to formatting/formatter.rs
+# not going to bother attempting to display swap until that time as it is pretty much always 0 unless crashing
+#format = "$icon$mem_avail.eng(w:3)$swap_used.eng(range:1.., pad_with:' ')"
 
 [[block]]
 block = "disk_space"
