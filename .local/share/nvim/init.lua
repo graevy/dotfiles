@@ -21,18 +21,25 @@ vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
+vim.api.nvim_set_keymap("n", "<F5>", ":DapContinue<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<F6>", ":DapTerminate<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<F10>", ":DapStepOver<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<F9>", ":DapToggleBreakpoint<CR>", { noremap = true, silent = true })
+
 require("lazy").setup({
   spec = {
-    -- lazyvim's defaults, stored in ~/.local/share/nvim/lazy/LazyVim/lua/lazyvim/plugins/
+    -- LazyVim + defaults, stored in ~/.local/share/nvim/lazy/LazyVim/lua/lazyvim/plugins/
     {
       "LazyVim/LazyVim",
       import = "lazyvim.plugins"
     },
-    -- my user-defined overrides, in ~/.local/share/nvim/lua/plugins/
+    -- my personal plugins, in ~/.local/share/nvim/lua/plugins/
     { import = "plugins" },
+    -- default LazyVim plugins I'm disabling
     { "blink.cmp",            enabled = false },
     { "bufferline.nvim",      enabled = false },
     { "mini.pairs",           enabled = false },
+    -- mason doesn't play well with nix. nvim-lspconfig does
     { "mason.nvim",           enabled = false },
     { "mason-lspconfig.nvim", enabled = false },
     { "trouble.nvim",         enabled = false },
