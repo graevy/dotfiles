@@ -29,16 +29,16 @@ vim.api.nvim_set_keymap('v', '<S-Tab>', '<gv', { noremap = true, silent = true }
 
 -- these are nvim-dap-ui provided shortcuts for e.g. ":lua require'dap'.continue()<CR>"
 -- for some reason lua-ls hates it when i use vim.keymap.set. whatever
-vim.api.nvim_set_keymap('n', '<F5>', ':DapContinue<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<F6>', ':DapTerminate<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<F10>', ':DapStepOver<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<F11>', ':DapStepInto<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<F12>', ':DapStepOut<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', 'B', ':DapToggleBreakpoint<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>dl', ':DapRunLast<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<F5>', ":lua require('dap').continue()<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<F6>', ":lua require('dap').terminate()<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<F10>', ":lua require('dap').step_over()<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<F11>', ":lua require('dap').step_into()<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<F12>', ":lua require('dap').step_out()<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', 'B', ":lua require('dap').toggle_breakpoint()<CR>", { noremap = true, silent = true })
+--vim.api.nvim_set_keymap('n', '<leader>dl', ':DapRunLast<CR>', { noremap = true, silent = true })
 
 -- toggle extra UI elements
-vim.api.nvim_set_keymap('n', '<M-E>', ':Neotree toggle left<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<M-E>', ':lua require("neo-tree")<CR>:Neotree toggle left<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<M-D>', ':lua require("dapui").toggle()<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<M-S>', '`', { noremap = true, silent = true })
 
@@ -46,33 +46,23 @@ vim.api.nvim_set_keymap('n', '<M-S>', '`', { noremap = true, silent = true })
 vim.fn.sign_define('DapBreakpoint', { text = '🔴', texthl = '', linehl = '', numhl = '' })
 vim.fn.sign_define('DapStopped', { text = '▶️', texthl = '', linehl = '', numhl = '' })
 
+-- rather than use lazyvim's defaults and selectively disabling plugins i dislike,
+-- i import only my subset of lazyvim's defaults, plugins.lazysubset
+-- "eventually" i will solidify on tooling and integrate lazysubset directly into plugins
+vim.g.lazyvim_check_order = false
+
 require("lazy").setup({
   spec = {
-    -- LazyVim + defaults, stored in ~/.local/share/nvim/lazy/LazyVim/lua/lazyvim/plugins/
     {
       "LazyVim/LazyVim",
-      import = "lazyvim.plugins"
+      import = "plugins.lazysubset" 
     },
     -- default LazyVim plugins I'm disabling
-    -- if you know what bufferline does, tell me. i'm serious, please tell me. is it like lualine?
-    { "bufferline.nvim",      enabled = false },
     -- mason doesn't play well with nix
     { "mason.nvim",           enabled = false },
     { "mason-lspconfig.nvim", enabled = false },
     -- not sure how much of lspconfig i want to gut
     { "nvim-lspconfig",       enabled = false },
-    -- everything below here is just adding to load times afaict
-    { "blink.cmp",            enabled = false },
-    { "persistence.nvim",     enabled = false },
-    { "trouble.nvim",         enabled = false },
-    { "mini.ai",              enabled = false },
-    { "mini.pairs",           enabled = false },
-    { "mini.icons",           enabled = false },
-    { "flash.nvim",           enabled = false },
-    { "todo-comments.nvim",   enabled = false },
-    { "ts-comments.nvim",     enabled = false },
-    { "nvim-ts-autotag",      enabled = false },
-    { "nvim-treesitter-textobjects", enabled = false },
     -- my plugins, ~/.local/share/nvim/lua/plugins/
     { import = "plugins" },
   },
@@ -116,6 +106,13 @@ require("lazy").setup({
     },
   },
 })
+
+-- i set neo-tree to lazy load, and this loads it if neovim is called on a dir
+-- have and eat cake
+if vim.fn.argc() == 1 and vim.fn.isdirectory(vim.fn.argv(0)) == 1 then
+  require("neo-tree")
+  vim.cmd("Neotree focus left")
+end
 
 -- disable spellchecking, enabled by default in lazy.nvim
 vim.api.nvim_create_autocmd("FileType", {
