@@ -70,9 +70,6 @@ require("lazy").setup({
       "LazyVim/LazyVim",
       import = "plugins.lazysubset"
     },
-    -- default LazyVim plugins I'm disabling
-    -- mason doesn't play well with nix
-    { "mason.nvim",      enabled = false },
     -- not sure how much of lspconfig i want to gut
     -- { "nvim-lspconfig",       enabled = false },
     -- my plugins, ~/.local/share/nvim/lua/plugins/
