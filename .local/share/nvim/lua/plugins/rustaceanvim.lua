@@ -1,1 +1,4 @@
-return { "mrcjkb/rustaceanvim" }
+return {
+  "mrcjkb/rustaceanvim",
+  ft = "rust",
+}
