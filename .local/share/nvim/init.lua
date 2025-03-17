@@ -21,14 +21,11 @@ vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
--- replicate vscode tab behavior
+-- vscode hotkeys basically
+-- for some reason lua-ls hates it when i use vim.keymap.set. whatever
 vim.api.nvim_set_keymap('v', '<Tab>', '>gv', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', '<S-Tab>', '<gv', { noremap = true, silent = true })
 
---vim.api.nvim_set_keymap('n', '<leader>D', '', { noremap = true, silent = true })
-
--- these are nvim-dap-ui provided shortcuts for e.g. ":lua require'dap'.continue()<CR>"
--- for some reason lua-ls hates it when i use vim.keymap.set. whatever
 vim.api.nvim_set_keymap('n', '<F5>', ":lua require('dap').continue()<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<F6>', ":lua require('dap').terminate()<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<F10>', ":lua require('dap').step_over()<CR>", { noremap = true, silent = true })
@@ -38,9 +35,25 @@ vim.api.nvim_set_keymap('n', 'B', ":lua require('dap').toggle_breakpoint()<CR>",
 --vim.api.nvim_set_keymap('n', '<leader>dl', ':DapRunLast<CR>', { noremap = true, silent = true })
 
 -- toggle extra UI elements
-vim.api.nvim_set_keymap('n', '<M-E>', ':lua require("neo-tree")<CR>:Neotree toggle left<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<M-E>', ':lua require("neo-tree")<CR>:Neotree toggle left<CR>',
+  { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<M-D>', ':lua require("dapui").toggle()<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<M-S>', '`', { noremap = true, silent = true })
+
+-- lint manually
+-- really wish we didn't freak out about vpi.keymap.set ._.
+function Toggle_diagnostic()
+  local bufnr = vim.api.nvim_get_current_buf()
+  if vim.diagnostic.is_enabled({ bufnr = bufnr }) then
+    vim.diagnostic.enable(false, { bufnr = bufnr })
+    print("Diagnostics disabled")
+  else
+    vim.diagnostic.enable(true, { bufnr = bufnr })
+    print("Diagnostics enabled")
+  end
+end
+
+vim.api.nvim_set_keymap("n", "<M-L>", ":lua Toggle_diagnostic()<CR>", { noremap = true, silent = true })
 
 -- pretty signs <3
 vim.fn.sign_define('DapBreakpoint', { text = '🔴', texthl = '', linehl = '', numhl = '' })
@@ -55,14 +68,13 @@ require("lazy").setup({
   spec = {
     {
       "LazyVim/LazyVim",
-      import = "plugins.lazysubset" 
+      import = "plugins.lazysubset"
     },
     -- default LazyVim plugins I'm disabling
     -- mason doesn't play well with nix
-    { "mason.nvim",           enabled = false },
-    { "mason-lspconfig.nvim", enabled = false },
+    { "mason.nvim",      enabled = false },
     -- not sure how much of lspconfig i want to gut
-    { "nvim-lspconfig",       enabled = false },
+    -- { "nvim-lspconfig",       enabled = false },
     -- my plugins, ~/.local/share/nvim/lua/plugins/
     { import = "plugins" },
   },
@@ -107,7 +119,7 @@ require("lazy").setup({
   },
 })
 
--- i set neo-tree to lazy load, and this loads it if neovim is called on a dir
+-- i set neo-tree to lazy load. this loads it if neovim is called on a dir
 -- have and eat cake
 if vim.fn.argc() == 1 and vim.fn.isdirectory(vim.fn.argv(0)) == 1 then
   require("neo-tree")

@@ -3,10 +3,10 @@ return {
     "mfussenegger/nvim-lint",
     event = "LazyFile",
     opts = {
-      -- Event to trigger linters
-      events = { "BufWritePost", "BufReadPost", "InsertLeave" },
+      -- Event to trigger linters. I only want to trigger lints manually
+      events = {},
       linters_by_ft = {
-        fish = { "fish" },
+        -- fish = { "fish" },
         -- Use the "*" filetype to run linters on all filetypes.
         -- ['*'] = { 'global linter' },
         -- Use the "_" filetype to run linters on filetypes that don't have other linters configured.
@@ -90,10 +90,11 @@ return {
         end
       end
 
-      vim.api.nvim_create_autocmd(opts.events, {
-        group = vim.api.nvim_create_augroup("nvim-lint", { clear = true }),
-        callback = M.debounce(100, M.lint),
-      })
+      -- i only want to lint manually
+      -- vim.api.nvim_create_autocmd(opts.events, {
+      --   group = vim.api.nvim_create_augroup("nvim-lint", { clear = true }),
+      --   callback = M.debounce(100, M.lint),
+      -- })
     end,
   },
 }
