@@ -22,23 +22,33 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
 -- vscode hotkeys basically
--- for some reason lua-ls hates it when i use vim.keymap.set. whatever
+-- for some reason lua-ls hates it when i use vim.keymap.set. whatever. *doubles your keybinds*
 vim.api.nvim_set_keymap('v', '<Tab>', '>gv', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', '<S-Tab>', '<gv', { noremap = true, silent = true })
 
 vim.api.nvim_set_keymap('n', '<F5>', ":lua require('dap').continue()<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '<F5>', ":lua require('dap').continue()<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<F6>', ":lua require('dap').terminate()<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '<F6>', ":lua require('dap').terminate()<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<F10>', ":lua require('dap').step_over()<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '<F10>', ":lua require('dap').step_over()<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<F11>', ":lua require('dap').step_into()<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '<F11>', ":lua require('dap').step_into()<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<F12>', ":lua require('dap').step_out()<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '<F12>', ":lua require('dap').step_out()<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', 'B', ":lua require('dap').toggle_breakpoint()<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', 'B', ":lua require('dap').toggle_breakpoint()<CR>", { noremap = true, silent = true })
 --vim.api.nvim_set_keymap('n', '<leader>dl', ':DapRunLast<CR>', { noremap = true, silent = true })
 
 -- toggle extra UI elements
 vim.api.nvim_set_keymap('n', '<M-E>', ':lua require("neo-tree")<CR>:Neotree toggle left<CR>',
   { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '<M-E>', ':lua require("neo-tree")<CR>:Neotree toggle left<CR>',
+  { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<M-D>', ':lua require("dapui").toggle()<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '<M-D>', ':lua require("dapui").toggle()<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<M-S>', '`', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('v', '<M-S>', '`', { noremap = true, silent = true })
 
 -- lint manually
 -- really wish we didn't freak out about vpi.keymap.set ._.
@@ -54,8 +64,10 @@ function Toggle_diagnostic()
 end
 
 vim.api.nvim_set_keymap("n", "<M-L>", ":lua Toggle_diagnostic()<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("v", "<M-L>", ":lua Toggle_diagnostic()<CR>", { noremap = true, silent = true })
 
 -- pretty signs <3
+-- the e.g. DapBreakpoint aliases are provided by nvim-dap-ui
 vim.fn.sign_define('DapBreakpoint', { text = '🔴', texthl = '', linehl = '', numhl = '' })
 vim.fn.sign_define('DapStopped', { text = '▶️', texthl = '', linehl = '', numhl = '' })
 
