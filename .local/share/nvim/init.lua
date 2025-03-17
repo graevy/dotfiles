@@ -21,10 +21,31 @@ vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
+
+-- right now, i only really ever use the filetree navigation or the debug window, so this is helpful
+-- search is probably best done in a floating window with telescope or fzf-lua?
+local dapui_open = false -- Track dap-ui state manually
+vim.keymap.set("n", "<leader>d", function()
+  if dapui_open then
+    require("dapui").close()
+    vim.cmd("Neotree focus left")
+    dapui_open = false
+  else
+    vim.cmd("Neotree close left")
+    require("dapui").open()
+    dapui_open = true
+  end
+end, { noremap = true, silent = true, desc = "Toggle between DAP UI and Neo-tree" })
+
+-- these are nvim-dap-ui provided shortcuts for e.g. ":lua require'dap'.continue()<CR>"
 vim.api.nvim_set_keymap("n", "<F5>", ":DapContinue<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<F6>", ":DapTerminate<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<F10>", ":DapStepOver<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<F9>", ":DapToggleBreakpoint<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "B", ":DapToggleBreakpoint<CR>", { noremap = true, silent = true })
+
+-- pretty signs <3
+vim.fn.sign_define('DapBreakpoint', { text = '🔴', texthl = '', linehl = '', numhl = '' })
+vim.fn.sign_define('DapStopped', { text = '▶️', texthl = '', linehl = '', numhl = '' })
 
 require("lazy").setup({
   spec = {
@@ -33,21 +54,25 @@ require("lazy").setup({
       "LazyVim/LazyVim",
       import = "lazyvim.plugins"
     },
-    -- my personal plugins, in ~/.local/share/nvim/lua/plugins/
-    { import = "plugins" },
     -- default LazyVim plugins I'm disabling
     { "blink.cmp",            enabled = false },
     { "bufferline.nvim",      enabled = false },
     { "mini.pairs",           enabled = false },
-    -- mason doesn't play well with nix. nvim-lspconfig does
+    -- mason doesn't play well with nix
     { "mason.nvim",           enabled = false },
     { "mason-lspconfig.nvim", enabled = false },
+    --{ "nvim-lspconfig",       enabled = false },
     { "trouble.nvim",         enabled = false },
+    -- my personal plugins, in ~/.local/share/nvim/lua/plugins/
+    { import = "plugins" },
   },
   install = { colorscheme = { "catppuccin" } },
   change_detection = {
     enabled = true,
     notify = false,
+  },
+  rocks = {
+    enabled = false
   },
   performance = {
     rtp = {
@@ -80,4 +105,11 @@ require("lazy").setup({
       },
     },
   },
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "*",
+  callback = function()
+    vim.opt_local.spell = false
+  end,
 })
