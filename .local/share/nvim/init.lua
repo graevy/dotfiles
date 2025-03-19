@@ -22,37 +22,31 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
 -- vscode hotkeys basically
--- for some reason lua-ls hates it when i use vim.keymap.set. whatever. *doubles your keybinds*
 vim.api.nvim_set_keymap('v', '<Tab>', '>gv', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('v', '<S-Tab>', '<gv', { noremap = true, silent = true })
 
-vim.api.nvim_set_keymap('n', '<F5>', ":lua require('dap').continue()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap('v', '<F5>', ":lua require('dap').continue()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<F6>', ":lua require('dap').terminate()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap('v', '<F6>', ":lua require('dap').terminate()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<F10>', ":lua require('dap').step_over()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap('v', '<F10>', ":lua require('dap').step_over()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<F11>', ":lua require('dap').step_into()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap('v', '<F11>', ":lua require('dap').step_into()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<F12>', ":lua require('dap').step_out()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap('v', '<F12>', ":lua require('dap').step_out()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', 'B', ":lua require('dap').toggle_breakpoint()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap('v', 'B', ":lua require('dap').toggle_breakpoint()<CR>", { noremap = true, silent = true })
---vim.api.nvim_set_keymap('n', '<leader>dl', ':DapRunLast<CR>', { noremap = true, silent = true })
+vim.keymap.set({ "n", "v" }, "<F5>", function() require('dap').continue() end)
+vim.keymap.set({ "n", "v" }, "<F6>", function() require('dap').terminate() end)
+vim.keymap.set({ "n", "v" }, "<F7>", function() require('dap').run_last() end)
+vim.keymap.set({ "n", "v" }, "<F10>", function() require('dap').step_over() end)
+vim.keymap.set({ "n", "v" }, "<F11>", function() require('dap').step_into() end)
+vim.keymap.set({ "n", "v" }, "<F12>", function() require('dap').step_out() end)
+vim.keymap.set({ "n", "v" }, "B", function() require('dap').toggle_breakpoint() end)
+
+-- GOTOs. vim Ctrl+O natively returns to previous cursor position
+vim.keymap.set({ "n", "v" }, "gd", vim.lsp.buf.definition, { desc = "goto definition" })
+vim.keymap.set({ "n", "v" }, "gtd", vim.lsp.buf.type_definition, { desc = "goto type definition" })
+vim.keymap.set({ "n", "v" }, "gr", function() require('fzf-lua').lsp_references() end, { desc = "goto references" })
 
 -- toggle extra UI elements
-vim.api.nvim_set_keymap('n', '<M-E>', ':lua require("neo-tree")<CR>:Neotree toggle left<CR>',
-  { noremap = true, silent = true })
-vim.api.nvim_set_keymap('v', '<M-E>', ':lua require("neo-tree")<CR>:Neotree toggle left<CR>',
-  { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<M-D>', ':lua require("dapui").toggle()<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('v', '<M-D>', ':lua require("dapui").toggle()<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<M-S>', '`', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('v', '<M-S>', '`', { noremap = true, silent = true })
+vim.keymap.set({ "n", "v" }, "<M-E>", function()
+  require('neo-tree')
+  vim.cmd("Neotree toggle left")
+end)
+vim.keymap.set({ "n", "v" }, "<M-D>", function() require("dapui").toggle() end)
 
 -- lint manually
--- really wish we didn't freak out about vpi.keymap.set ._.
-function Toggle_diagnostic()
+vim.keymap.set({ "n", "v" }, "<M-L>", function()
   local bufnr = vim.api.nvim_get_current_buf()
   if vim.diagnostic.is_enabled({ bufnr = bufnr }) then
     vim.diagnostic.enable(false, { bufnr = bufnr })
@@ -61,10 +55,7 @@ function Toggle_diagnostic()
     vim.diagnostic.enable(true, { bufnr = bufnr })
     print("Diagnostics enabled")
   end
-end
-
-vim.api.nvim_set_keymap("n", "<M-L>", ":lua Toggle_diagnostic()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("v", "<M-L>", ":lua Toggle_diagnostic()<CR>", { noremap = true, silent = true })
+end)
 
 -- pretty signs <3
 -- the e.g. DapBreakpoint aliases are provided by nvim-dap-ui
@@ -83,7 +74,10 @@ require("lazy").setup({
       import = "plugins.lazysubset"
     },
     -- not sure how much of lspconfig i want to gut
-    -- { "nvim-lspconfig",       enabled = false },
+    -- it's getting pseudo-deprecated in nvim 11 with vim.lsp.config being added
+    -- { "nvim-lspconfig",  enabled = false },
+    -- lualine looks nice, it has ok summary info, not sure it's helpful..maybe for large files?
+    { "lualine.nvim",    enabled = false },
     -- my plugins, ~/.local/share/nvim/lua/plugins/
     { import = "plugins" },
   },
@@ -110,6 +104,7 @@ require("lazy").setup({
         "matchit",
         "tar",
         "tarPlugin",
+        "spellfile",
         "spellfile_plugin",
         "vimball",
         "vimballPlugin",
@@ -128,8 +123,7 @@ require("lazy").setup({
   },
 })
 
--- i set neo-tree to lazy load. this loads it if neovim is called on a dir
--- have and eat cake
+-- i set neo-tree to lazy load. this loads it if neovim is called on a dir. have and eat cake?
 if vim.fn.argc() == 1 and vim.fn.isdirectory(vim.fn.argv(0)) == 1 then
   require("neo-tree")
   vim.cmd("Neotree focus left")
@@ -142,3 +136,9 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.opt_local.spell = false
   end,
 })
+
+-- not getting anything out of the statusline so i'm killing it
+-- also needs to be disabled after loading lazy i think
+-- maybe the progress percentage was useful?
+-- tracking errors while linting is disabled was also nice
+vim.o.laststatus = 0
