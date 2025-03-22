@@ -1,4 +1,4 @@
 return {
   "ibhagwan/fzf-lua",
-  -- lazy = true,
+  event = "VeryLazy",
 }

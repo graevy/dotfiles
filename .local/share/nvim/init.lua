@@ -21,41 +21,58 @@ vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
--- vscode hotkeys basically
-vim.api.nvim_set_keymap('v', '<Tab>', '>gv', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('v', '<S-Tab>', '<gv', { noremap = true, silent = true })
+-- Caching this might speed up lua interpretation?
+local nmap = function(mode, keys, func, desc)
+  if desc then
+    desc = 'LSP: ' .. desc
+  end
 
-vim.keymap.set({ "n", "v" }, "<F5>", function() require('dap').continue() end)
-vim.keymap.set({ "n", "v" }, "<F6>", function() require('dap').terminate() end)
-vim.keymap.set({ "n", "v" }, "<F7>", function() require('dap').run_last() end)
-vim.keymap.set({ "n", "v" }, "<F10>", function() require('dap').step_over() end)
-vim.keymap.set({ "n", "v" }, "<F11>", function() require('dap').step_into() end)
-vim.keymap.set({ "n", "v" }, "<F12>", function() require('dap').step_out() end)
-vim.keymap.set({ "n", "v" }, "B", function() require('dap').toggle_breakpoint() end)
+  vim.keymap.set(mode, keys, func, { desc = desc })
+end
+
+-- vscode hotkeys basically
+nmap("v", "<Tab>", ">gv", "Tab Block")
+nmap("v", "<S-Tab>", "<gv", "Untab Block")
+
+nmap({ "n", "v" }, "<F5>", function() require('dap').continue() end, "Start/Continue")
+nmap({ "n", "v" }, "<F6>", function() require('dap').terminate() end, "Terminate")
+nmap({ "n", "v" }, "<F7>", function() require('dap').run_last() end, "Run Last")
+nmap({ "n", "v" }, "<F10>", function() require('dap').step_over() end, "Step Over")
+nmap({ "n", "v" }, "<F11>", function() require('dap').step_into() end, "Step Into")
+nmap({ "n", "v" }, "<F12>", function() require('dap').step_out() end, "Step Out")
+nmap({ "n", "v" }, "B", function() require('dap').toggle_breakpoint() end, "Toggle Breakpoint")
 
 -- GOTOs. vim Ctrl+O natively returns to previous cursor position
-vim.keymap.set({ "n", "v" }, "gd", vim.lsp.buf.definition, { desc = "goto definition" })
-vim.keymap.set({ "n", "v" }, "gtd", vim.lsp.buf.type_definition, { desc = "goto type definition" })
-vim.keymap.set({ "n", "v" }, "gr", function() require('fzf-lua').lsp_references() end, { desc = "goto references" })
+nmap({ "n", "v" }, "gd", vim.lsp.buf.definition, "GoTo Definition")
+nmap({ "n", "v" }, "gtd", vim.lsp.buf.type_definition, "GoTo Type Definition")
+nmap({ "n", "v" }, "gr", function() require('fzf-lua').lsp_references() end, "GoTo References")
 
 -- toggle extra UI elements
-vim.keymap.set({ "n", "v" }, "<M-E>", function()
-  require('neo-tree')
-  vim.cmd("Neotree toggle left")
-end)
-vim.keymap.set({ "n", "v" }, "<M-D>", function() require("dapui").toggle() end)
+nmap({ "n", "v" }, "<M-E>", function()
+    require('neo-tree')
+    vim.cmd("Neotree toggle left")
+  end,
+  "Toggle Neotree"
+)
+nmap({ "n", "v" }, "<M-D>", function() require("dapui").toggle() end, "Toggle DAP (Debugging) UI")
 
 -- lint manually
-vim.keymap.set({ "n", "v" }, "<M-L>", function()
-  local bufnr = vim.api.nvim_get_current_buf()
-  if vim.diagnostic.is_enabled({ bufnr = bufnr }) then
-    vim.diagnostic.enable(false, { bufnr = bufnr })
-    print("Diagnostics disabled")
-  else
-    vim.diagnostic.enable(true, { bufnr = bufnr })
-    print("Diagnostics enabled")
-  end
-end)
+nmap({ "n", "v" }, "<M-L>",
+  function()
+    local bufnr = vim.api.nvim_get_current_buf()
+    if vim.diagnostic.is_enabled({ bufnr = bufnr }) then
+      vim.diagnostic.enable(false, { bufnr = bufnr })
+      print("Diagnostics disabled")
+    else
+      vim.diagnostic.enable(true, { bufnr = bufnr })
+      print("Diagnostics enabled")
+    end
+  end,
+  "Toggle Linting Display"
+)
+
+-- wrapping
+nmap({ "n", "v" }, "<M-z>", function() vim.cmd("set wrap!") end, "Toggle line-wrapping")
 
 -- pretty signs <3
 -- the e.g. DapBreakpoint aliases are provided by nvim-dap-ui
