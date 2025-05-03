@@ -1,6 +1,9 @@
 /*
 /.*
 !/.gitignore
+
+!/shared
+
 !/alacritty
 !/i3status-rust
 !/nvim
