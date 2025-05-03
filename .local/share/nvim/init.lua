@@ -31,8 +31,11 @@ local nmap = function(mode, keys, func, desc)
 end
 
 -- vscode hotkeys basically
-nmap("v", "<Tab>", ">gv", "Tab Block")
-nmap("v", "<S-Tab>", "<gv", "Untab Block")
+nmap("v", "<Tab>", ">gv", "Indent Block")
+nmap("v", "<S-Tab>", "<gv", "Unindent Block")
+-- << and >> indent/unindent natively in vim
+nmap("n", "<Tab>", ">>", "Indent Line")
+nmap("n", "<S-Tab>", "<<", "Unindent Line")
 
 nmap({ "n", "v" }, "<F5>", function() require('dap').continue() end, "Start/Continue")
 nmap({ "n", "v" }, "<F6>", function() require('dap').terminate() end, "Terminate")
