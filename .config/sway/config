@@ -42,7 +42,7 @@ output HDMI-A-1 resolution 1920x1080 position 1920,0
 input "1739:52552:SYNA1D31:00_06CB:CD48_Touchpad" {
     accel_profile "flat"
     natural_scroll enabled
-    dwt enabled
+    dwt disabled
     tap enabled
     middle_emulation enabled
 }
@@ -243,6 +243,10 @@ default_border none
 
 bindsym XF86MonBrightnessDown exec --no-startup-id brightnessctl set 0001
 bindsym XF86MonBrightnessUp exec --no-startup-id brightnessctl set +5%
+
+# scratchpad
+bindsym $mod+apostrophe scratchpad show
+bindsym $mod+Shift+apostrophe move scratchpad
 
 # i guess i3status interprets sigusr1 as a reload?
 set $refresh_i3status killall -SIGUSR1 i3status-rs
