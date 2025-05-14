@@ -4,6 +4,7 @@
 !/.gitignore
 
 !/.bashrc
+!/.bash_profile
 
 !.config
 !.local
