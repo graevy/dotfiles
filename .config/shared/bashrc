@@ -24,6 +24,9 @@ rmtmp() { sudo rm -rf /tmp/* /tmp/.*; }
 yeet() {
   git add -A && git commit -m "${*:-yeet}" && git push
 }
+replace() {
+  find . -type f -print0 | xargs -0 sed -i "s/${1//\//\\/}/${2//\//\\/}/g"
+}
 
 # shortcuts
 alias n='nvim'
@@ -42,7 +45,8 @@ alias rescan='nmcli d wifi list --rescan yes'
 alias wttr='curl -s wttr.in/seattle'
 # deprecated; keeping for ytdlp documentation
 #alias ytdl="youtube-dl -f bestaudio --audio-quality 0 --embed-thumbnail -x --audio-format mp3 --add-metadata -o '%(title)s.%(ext)s'"
-alias ytdlp="yt-dlp -f bestaudio --add-metadata -o '%(title)s.%(ext)s'"
+alias ytdlv="yt-dlp -f bestaudio --add-metadata -o '%(title)s.%(ext)s'"
+alias ytdla="yt-dlp -x --audio-format opus --add-metadata -o '%(title)s.%(ext)s'"
 ish() { ssh -o StrictHostKeyChecking=no "$@"; }
 icp() { scp -o StrictHostKeyChecking=no "$@"; }
 irc() { irssi -n ${NICKNAME:-$USER}; }
