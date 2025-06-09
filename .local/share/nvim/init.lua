@@ -77,7 +77,7 @@ nmap({ "n", "v" }, "<M-E>", function()
 )
 nmap({ "n", "v" }, "<M-D>", function() require("dapui").toggle() end, "Toggle DAP (Debugging) UI")
 
--- lint manually
+-- toggle lint display
 nmap({ "n", "v" }, "<M-L>",
   function()
     local bufnr = vim.api.nvim_get_current_buf()
@@ -95,29 +95,19 @@ nmap({ "n", "v" }, "<M-L>",
 -- wrapping
 nmap({ "n", "v" }, "<M-z>", function() vim.cmd("set wrap!") end, "Toggle line-wrapping")
 
--- LSP keybinds for attached buffers
-local function setup_lsp_keybinds(buffer)
-  local function map(mode, lhs, rhs, opts)
-    opts = opts or {}
-    opts.buffer = buffer
-    vim.keymap.set(mode, lhs, rhs, opts)
-  end
-
-  map("n", "gD", vim.lsp.buf.declaration, { desc = "LSP: GoTo Declaration" })
-  map("n", "gI", vim.lsp.buf.implementation, { desc = "LSP: GoTo Implementation" })
-  map("n", "K", vim.lsp.buf.hover, { desc = "Hover" })
-  map("n", "gK", vim.lsp.buf.signature_help, { desc = "LSP: Signature Help" })
-  map("i", "<c-k>", vim.lsp.buf.signature_help, { desc = "LSP: Signature Help" })
-  map("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "LSP: Code Action" })
-  map("v", "<leader>ca", vim.lsp.buf.code_action, { desc = "LSP: Code Action" })
-  map("n", "<leader>cr", vim.lsp.buf.rename, { desc = "LSP: Rename" })
-  map("n", "<leader>cf", function()
-    vim.lsp.buf.format({ timeout_ms = 3000 })
-  end, { desc = "Format Document" })
-  map("n", "]d", vim.diagnostic.goto_next, { desc = "LSP: Next Diagnostic" })
-  map("n", "[d", vim.diagnostic.goto_prev, { desc = "LSP: Prev Diagnostic" })
-  map("n", "<leader>cd", vim.diagnostic.open_float, { desc = "LSP: Line Diagnostics" })
-end
+-- LSPs. elected not to attach these to an lsp buffer so they will error loudly instead of silently
+nmap("n", "gD", vim.lsp.buf.declaration, "LSP: GoTo Declaration")
+nmap("n", "gI", vim.lsp.buf.implementation, "LSP: GoTo Implementation")
+nmap("n", "K", vim.lsp.buf.hover, "Hover")
+nmap("n", "gK", vim.lsp.buf.signature_help, "LSP: Signature Help")
+nmap("i", "<c-k>", vim.lsp.buf.signature_help, "LSP: Signature Help")
+nmap("n", "<leader>ca", vim.lsp.buf.code_action, "LSP: Code Action")
+nmap("v", "<leader>ca", vim.lsp.buf.code_action, "LSP: Code Action")
+nmap("n", "<leader>cr", vim.lsp.buf.rename, "LSP: Rename")
+nmap("n", "<leader>cf", function() vim.lsp.buf.format({ timeout_ms = 3000 }) end, "Format Document")
+nmap("n", "]d", vim.diagnostic.goto_next, "LSP: Next Diagnostic")
+nmap("n", "[d", vim.diagnostic.goto_prev, "LSP: Prev Diagnostic")
+nmap("n", "<leader>cd", vim.diagnostic.open_float, "LSP: Line Diagnostics")
 
 -- pretty signs <3
 -- the e.g. DapBreakpoint aliases are provided by nvim-dap-ui
