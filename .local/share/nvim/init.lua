@@ -1,4 +1,4 @@
--- Bootstrap lazy.nvim
+-- bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   local lazyrepo = "https://github.com/folke/lazy.nvim.git"
@@ -17,15 +17,9 @@ vim.opt.rtp:prepend(lazypath)
 
 -- ===== VIM SETTINGS =====
 
--- Make sure to setup `mapleader` and `maplocalleader` before
--- loading lazy.nvim so that mappings are correct.
+-- mappings need to be set before loading lazy.nvim
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
-
--- rather than use lazyvim's defaults and selectively disabling plugins i dislike,
--- i import only my subset of lazyvim's defaults, plugins.lazysubset
--- "eventually" i will solidify on tooling and integrate lazysubset directly into plugins
-vim.g.lazyvim_check_order = false
 
 vim.opt.number = true
 vim.opt.relativenumber = true
@@ -36,9 +30,33 @@ vim.opt.shiftwidth = 2     -- Size of indent
 vim.opt.softtabstop = 2    -- Number of spaces in tab when editing
 vim.opt.expandtab = true   -- Convert tabs to spaces
 
-vim.opt.smartindent = true -- Smart auto-indenting for new lines
+vim.opt.smartindent = true -- "Smart" auto-indenting for new lines
 vim.opt.backspace = { "indent", "eol", "start" }
-vim.opt.wrap = false
+vim.opt.wrap = false -- disable by default; i have alt+z bound to toggle
+
+-- load neotree if neovim is called on a dir.
+-- i configured neotree to only load when its hotkey is pressed (Shift+Alt+E at the moment), so this is convenient
+if vim.fn.argc() == 1 and vim.fn.isdirectory(vim.fn.argv(0)) == 1 then
+  require("neo-tree")
+  vim.cmd("Neotree focus left")
+end
+
+-- when a new buffer is done loading,
+-- disable spellchecking and diagnostics (linting).
+-- lazy.nvim enables spellchecking by default, and it's a git submodule i don't want to deal with
+-- diagnostics toggle with a keybind defined below (Shift+Alt+L). lualine displays the error count either way
+vim.api.nvim_create_autocmd("BufReadPost", {
+  pattern = "*",
+  callback = function()
+    vim.opt_local.spell = false
+    vim.diagnostic.enable(false, { bufnr = 0 })
+  end,
+})
+
+-- pretty signs <3
+-- the e.g. DapBreakpoint aliases are provided by nvim-dap-ui
+vim.fn.sign_define('DapBreakpoint', { text = '🔴', texthl = '', linehl = '', numhl = '' })
+vim.fn.sign_define('DapStopped', { text = '▶️', texthl = '', linehl = '', numhl = '' })
 
 -- ===== KEYBINDS =====
 
@@ -95,7 +113,7 @@ nmap({ "n", "v" }, "<M-L>",
 -- wrapping
 nmap({ "n", "v" }, "<M-z>", function() vim.cmd("set wrap!") end, "Toggle line-wrapping")
 
--- LSPs. elected not to attach these to an lsp buffer so they will error loudly instead of silently
+-- LSP keybinds. elected not to attach these to an lsp buffer so they won't error silently
 nmap("n", "gD", vim.lsp.buf.declaration, "LSP: GoTo Declaration")
 nmap("n", "gI", vim.lsp.buf.implementation, "LSP: GoTo Implementation")
 nmap("n", "K", vim.lsp.buf.hover, "Hover")
@@ -109,11 +127,6 @@ nmap("n", "]d", vim.diagnostic.goto_next, "LSP: Next Diagnostic")
 nmap("n", "[d", vim.diagnostic.goto_prev, "LSP: Prev Diagnostic")
 nmap("n", "<leader>cd", vim.diagnostic.open_float, "LSP: Line Diagnostics")
 
--- pretty signs <3
--- the e.g. DapBreakpoint aliases are provided by nvim-dap-ui
-vim.fn.sign_define('DapBreakpoint', { text = '🔴', texthl = '', linehl = '', numhl = '' })
-vim.fn.sign_define('DapStopped', { text = '▶️', texthl = '', linehl = '', numhl = '' })
-
 -- ===== LAZY =====
 
 require("lazy").setup({
@@ -121,13 +134,8 @@ require("lazy").setup({
     -- ~/.local/share/nvim/lua/plugins/, the whole folder (but not subdirs)
     { import = "plugins" },
   },
-  -- install = { colorscheme = { "catppuccin" } },
   change_detection = {
     enabled = true,
-    notify = false,
-  },
-  rocks = {
-    enabled = false
   },
   performance = {
     rtp = {
@@ -163,34 +171,10 @@ require("lazy").setup({
   },
 })
 
-vim.cmd.colorscheme("catppuccin")
-
--- i set neo-tree to load only when its hotkey is pressed. load neotree if neovim is called on a dir. have and eat cake
-if vim.fn.argc() == 1 and vim.fn.isdirectory(vim.fn.argv(0)) == 1 then
-  require("neo-tree")
-  vim.cmd("Neotree focus left")
-end
-
--- disable spellchecking, enabled by default in lazy.nvim
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "*",
-  callback = function()
-    vim.opt_local.spell = false
-  end,
-})
-
--- disable linting by default (see the toggle in the keybinds section)
-vim.api.nvim_create_autocmd("BufEnter", {
-  callback = function()
-    vim.diagnostic.enable(false, { bufnr = 0 })
-  end,
-})
-
--- ===== LSP SETUP =====
-
+-- ===== LSPs =====
 local lsp = require("lsp")
 
--- Setup LSP with lazy initialization
+-- lazy-init the lsps themselves
 vim.api.nvim_create_autocmd({ "BufReadPre", "BufNewFile" }, {
   group = vim.api.nvim_create_augroup("LazyLSP", { clear = true }),
   once = true,
@@ -198,17 +182,4 @@ vim.api.nvim_create_autocmd({ "BufReadPre", "BufNewFile" }, {
     lsp.setup()
   end,
 })
-
--- Add debug command for LSP troubleshooting
-vim.api.nvim_create_user_command("LspDebug", function()
-  lsp.debug()
-end, { desc = "Debug LSP configuration" })
-
--- Optional: Add command to manually restart LSP
-vim.api.nvim_create_user_command("LspRestart", function()
-  vim.cmd("LspStop")
-  vim.defer_fn(function()
-    vim.cmd("edit") -- Re-trigger FileType
-  end, 100)
-end, { desc = "Restart LSP servers" })
 
