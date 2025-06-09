@@ -16,14 +16,27 @@ return {
               local ret, _ = vim.bo.fileformat:gsub("^unix$", "")
               return ret
             end,
-            -- 'filetype'
+            -- Show up to 2 active LSP clients, with +N if more
             function()
-              local clients = vim.lsp.get_active_clients({ bufnr = 0 })
-              if next(clients) == nil then return "" end
-              return clients[1].name
-            end
+              local bufnr = vim.api.nvim_get_current_buf()
+              local clients = vim.lsp.get_active_clients({ bufnr = bufnr })
+              if not clients or vim.tbl_isempty(clients) then return "" end
+
+              local max_display = 2
+              local names = {}
+              for i, client in ipairs(clients) do
+                if i <= max_display then
+                  table.insert(names, client.name)
+                end
+              end
+
+              local extra = #clients - max_display
+              local suffix = extra > 0 and (" + " .. extra) or ""
+
+              return table.concat(names, ", ") .. suffix
+            end,
           },
-        -- lualine_z = { 'location', '%=' },
+          -- lualine_z = { 'location', '%=' },
         },
       }
     end
