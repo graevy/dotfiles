@@ -19,7 +19,6 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Make sure to setup `mapleader` and `maplocalleader` before
 -- loading lazy.nvim so that mappings are correct.
--- This is also a good place to setup other settings (vim.opt)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
@@ -38,7 +37,7 @@ vim.opt.softtabstop = 2    -- Number of spaces in tab when editing
 vim.opt.expandtab = true   -- Convert tabs to spaces
 
 vim.opt.smartindent = true -- Smart auto-indenting for new lines
--- vim.opt.backspace = { "indent", "eol", "start" }
+vim.opt.backspace = { "indent", "eol", "start" }
 vim.opt.wrap = false
 
 -- ===== KEYBINDS =====
@@ -96,7 +95,7 @@ nmap({ "n", "v" }, "<M-L>",
 -- wrapping
 nmap({ "n", "v" }, "<M-z>", function() vim.cmd("set wrap!") end, "Toggle line-wrapping")
 
--- LSP keybinds (applied on LspAttach)
+-- LSP keybinds for attached buffers
 local function setup_lsp_keybinds(buffer)
   local function map(mode, lhs, rhs, opts)
     opts = opts or {}
@@ -132,7 +131,7 @@ require("lazy").setup({
     -- lualine looks nice, it has ok summary info, not sure it's helpful..maybe for large files?
     -- leaving it for now
     -- { "lualine.nvim",    enabled = false },
-    -- my plugins, ~/.local/share/nvim/lua/plugins/
+    -- ~/.local/share/nvim/lua/plugins/, the whole folder (but not subdirs)
     { import = "plugins" },
   },
   -- install = { colorscheme = { "catppuccin" } },
@@ -197,195 +196,29 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
--- ===== LSP CONFIG =====
+-- ===== LSP SETUP =====
 
--- Native LSP Configuration (lazy-loaded)
-local lsp_setup_done = false
+local lsp = require("lsp")
 
-local function setup_lsp()
-  if lsp_setup_done then return end
-  lsp_setup_done = true
-
-  -- Configure diagnostics
-  vim.diagnostic.config({
-    underline = true,
-    update_in_insert = false,
-    virtual_text = {
-      spacing = 4,
-      source = "if_many",
-      prefix = "●",
-    },
-    severity_sort = true,
-    signs = {
-      text = {
-        [vim.diagnostic.severity.ERROR] = "E",
-        [vim.diagnostic.severity.WARN] = "W",
-        [vim.diagnostic.severity.HINT] = "H",
-        [vim.diagnostic.severity.INFO] = "I",
-      },
-    },
-  })
-
-  -- Build capabilities (simplified for your setup without completion engines)
-  local capabilities = vim.tbl_deep_extend(
-    "force",
-    {},
-    vim.lsp.protocol.make_client_capabilities(),
-    {
-      workspace = {
-        fileOperations = {
-          didRename = true,
-          willRename = true,
-        },
-      },
-    }
-  )
-
-  -- Lua Language Server
-  vim.lsp.config("lua_ls", {
-    cmd = { "lua-language-server" },
-    filetypes = { "lua" },
-    root_markers = { ".luarc.json", ".luarc.jsonc", ".luacheckrc", ".stylua.toml", "stylua.toml", "selene.toml", "selene.yml" },
-    capabilities = capabilities,
-    settings = {
-      Lua = {
-        workspace = {
-          checkThirdParty = false,
-        },
-        codeLens = {
-          enable = true,
-        },
-        completion = {
-          callSnippet = "Replace",
-        },
-        doc = {
-          privateName = { "^_" },
-        },
-        hint = {
-          enable = true,
-          setType = false,
-          paramType = true,
-          paramName = "Disable",
-          semicolon = "Disable",
-          arrayIndex = "Disable",
-        },
-      },
-    },
-  })
-
-  -- Clangd for C/C++
-  vim.lsp.config("clangd", {
-    cmd = { "clangd" },
-    filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
-    root_markers = { 
-      ".clangd", 
-      ".clang-tidy", 
-      ".clang-format", 
-      "compile_commands.json", 
-      "compile_flags.txt", 
-      "configure.ac",
-      ".git"
-    },
-    capabilities = capabilities,
-    settings = {},
-  })
-
-  -- Python LSP Server
-  vim.lsp.config("pylsp", {
-    cmd = { "pylsp" },
-    filetypes = { "python" },
-    root_markers = {
-      "pyproject.toml",
-      "setup.py",
-      "setup.cfg",
-      "requirements.txt",
-      "Pipfile",
-      ".git"
-    },
-    capabilities = capabilities,
-    settings = {
-      pylsp = {
-        plugins = {
-          pycodestyle = {
-            ignore = {'W391'},
-            maxLineLength = 100,
-          },
-          pyflakes = {
-            enabled = true,
-          },
-          autopep8 = {
-            enabled = true,
-          },
-          yapf = {
-            enabled = false,
-          },
-          pylint = {
-            enabled = false,
-          },
-        },
-      },
-    },
-  })
-
-  -- Setup LSP keymaps and autocommands
-  vim.api.nvim_create_autocmd("LspAttach", {
-    group = vim.api.nvim_create_augroup("UserLspConfig", {}),
-    callback = function(ev)
-      local client = vim.lsp.get_client_by_id(ev.data.client_id)
-      local buffer = ev.buf
-
-      -- Enable completion triggered by <c-x><c-o>
-      vim.bo[buffer].omnifunc = "v:lua.vim.lsp.omnifunc"
-
-      -- Apply LSP keybinds (defined above with other keybinds)
-      setup_lsp_keybinds(buffer)
-
-      -- Inlay hints
-      if client and client.supports_method("textDocument/inlayHint") then
-        if vim.api.nvim_buf_is_valid(buffer) and vim.bo[buffer].buftype == "" then
-          vim.lsp.inlay_hint.enable(true, { bufnr = buffer })
-        end
-      end
-
-      -- Document highlight
-      if client and client.supports_method("textDocument/documentHighlight") then
-        vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-          buffer = buffer,
-          callback = vim.lsp.buf.document_highlight,
-        })
-        vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
-          buffer = buffer,
-          callback = vim.lsp.buf.clear_references,
-        })
-      end
-    end,
-  })
-
-  -- Setup autoformat
-  vim.api.nvim_create_autocmd("BufWritePre", {
-    group = vim.api.nvim_create_augroup("LspFormat", {}),
-    callback = function(ev)
-      -- Only format if LSP client supports formatting
-      local clients = vim.lsp.get_clients({ bufnr = ev.buf })
-      for _, client in ipairs(clients) do
-        if client.supports_method("textDocument/formatting") then
-          vim.lsp.buf.format({
-            bufnr = ev.buf,
-            timeout_ms = 3000,
-            formatting_options = nil,
-          })
-          break
-        end
-      end
-    end,
-  })
-end
-
--- One-shot lazy-load LSP on first file open
+-- Setup LSP with lazy initialization
 vim.api.nvim_create_autocmd({ "BufReadPre", "BufNewFile" }, {
   group = vim.api.nvim_create_augroup("LazyLSP", { clear = true }),
   once = true,
-  callback = setup_lsp,
+  callback = function()
+    lsp.setup()
+  end,
 })
 
--- ===== LSP CONFIG =====
+-- Add debug command for LSP troubleshooting
+vim.api.nvim_create_user_command("LspDebug", function()
+  lsp.debug()
+end, { desc = "Debug LSP configuration" })
+
+-- Optional: Add command to manually restart LSP
+vim.api.nvim_create_user_command("LspRestart", function()
+  vim.cmd("LspStop")
+  vim.defer_fn(function()
+    vim.cmd("edit") -- Re-trigger FileType
+  end, 100)
+end, { desc = "Restart LSP servers" })
+
