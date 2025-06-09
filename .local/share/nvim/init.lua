@@ -77,7 +77,7 @@ nmap({ "n", "v" }, "<M-E>", function()
 )
 nmap({ "n", "v" }, "<M-D>", function() require("dapui").toggle() end, "Toggle DAP (Debugging) UI")
 
--- toggle lint display
+-- toggle lint display. lualine still lists warnings/errors/etc. i disable the linting by default down below
 nmap({ "n", "v" }, "<M-L>",
   function()
     local bufnr = vim.api.nvim_get_current_buf()
@@ -118,9 +118,6 @@ vim.fn.sign_define('DapStopped', { text = '▶️', texthl = '', linehl = '', nu
 
 require("lazy").setup({
   spec = {
-    -- lualine looks nice, it has ok summary info, not sure it's helpful..maybe for large files?
-    -- leaving it for now
-    -- { "lualine.nvim",    enabled = false },
     -- ~/.local/share/nvim/lua/plugins/, the whole folder (but not subdirs)
     { import = "plugins" },
   },
@@ -166,10 +163,6 @@ require("lazy").setup({
   },
 })
 
--- if i want to disable the statusline again, kill lualine, and then uncomment this
--- needs to be disabled after loading lazy i think
--- vim.o.laststatus = 0
-
 vim.cmd.colorscheme("catppuccin")
 
 -- i set neo-tree to load only when its hotkey is pressed. load neotree if neovim is called on a dir. have and eat cake
@@ -183,6 +176,13 @@ vim.api.nvim_create_autocmd("FileType", {
   pattern = "*",
   callback = function()
     vim.opt_local.spell = false
+  end,
+})
+
+-- disable linting by default (see the toggle in the keybinds section)
+vim.api.nvim_create_autocmd("BufEnter", {
+  callback = function()
+    vim.diagnostic.enable(false, { bufnr = 0 })
   end,
 })
 
