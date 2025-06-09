@@ -21,12 +21,14 @@ cdt() { cd $(mktemp -d); }
 please() { sudo $(fc -ln -1); }
 rmv() { mv "$@" /tmp; }
 rmtmp() { sudo rm -rf /tmp/* /tmp/.*; }
+replace() {
+  # finds-and-replaces all instances of $1 with $2 in files in cwd
+  find . -type f -print0 | xargs -0 sed -i "s/${1//\//\\/}/${2//\//\\/}/g"
+}
 yeet() {
   git add -A && git commit -m "${*:-yeet}" && git push
 }
-replace() {
-  find . -type f -print0 | xargs -0 sed -i "s/${1//\//\\/}/${2//\//\\/}/g"
-}
+amend() { git commit --amend -C HEAD "$@"; }
 
 # shortcuts
 alias n='nvim'
@@ -44,7 +46,7 @@ alias freeze='su -c "echo freeze > /sys/power/state"'
 alias rescan='nmcli d wifi list --rescan yes'
 alias wttr='curl -s wttr.in/seattle'
 # deprecated; keeping for ytdlp documentation
-#alias ytdl="youtube-dl -f bestaudio --audio-quality 0 --embed-thumbnail -x --audio-format mp3 --add-metadata -o '%(title)s.%(ext)s'"
+#"youtube-dl -f bestaudio --audio-quality 0 --embed-thumbnail -x --audio-format mp3 --add-metadata -o '%(title)s.%(ext)s'"
 alias ytdlv="yt-dlp -f bestaudio --add-metadata -o '%(title)s.%(ext)s'"
 alias ytdla="yt-dlp -x --audio-format opus --add-metadata -o '%(title)s.%(ext)s'"
 ish() { ssh -o StrictHostKeyChecking=no "$@"; }
