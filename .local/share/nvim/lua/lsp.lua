@@ -1,4 +1,6 @@
 -- modular LSP config for neovim 0.11+ (it uses vim.lsp.config)
+local lsp = vim.lsp
+
 local M = {}
 
 local lsp_setup_done = false
@@ -12,7 +14,7 @@ local function build_capabilities()
     {},
     -- append default neovim client capabilities to the table
     -- https://github.com/neovim/neovim/blob/cb4559bc32049d2268ab002207bb7445027e9264/runtime/lua/vim/lsp/protocol.lua#L331
-    vim.lsp.protocol.make_client_capabilities(),
+    lsp.protocol.make_client_capabilities(),
     {
       -- overrides
       workspace = {
@@ -48,12 +50,12 @@ local function setup_diagnostics()
   })
 end
 
--- setup LSP servers using vim.lsp.config()
+-- setup LSP servers using lsp.config()
 local function setup_lsp_servers()
   local capabilities = build_capabilities()
 
   -- rust
-  vim.lsp.config("rust_analyzer", {
+  lsp.config("rust_analyzer", {
     cmd = { "rust-analyzer" },
     filetypes = { "rust" },
     root_markers = {
@@ -108,7 +110,7 @@ local function setup_lsp_servers()
   })
 
   -- C/C++
-  vim.lsp.config("clangd", {
+  lsp.config("clangd", {
     cmd = { "clangd" },
     filetypes = { "c", "cpp", "objc", "objcpp", "cuda", "proto" },
     root_markers = {
@@ -125,7 +127,7 @@ local function setup_lsp_servers()
   })
 
   -- python
-  vim.lsp.config("pylsp", {
+  lsp.config("pylsp", {
     cmd = { "pylsp" },
     filetypes = { "python" },
     root_markers = {
@@ -162,7 +164,7 @@ local function setup_lsp_servers()
   })
 
   -- lua
-  vim.lsp.config("lua_ls", {
+  lsp.config("lua_ls", {
     cmd = { "lua-language-server" },
     filetypes = { "lua" },
     root_markers = {
@@ -203,7 +205,7 @@ local function setup_lsp_servers()
   })
 
   -- go
-  vim.lsp.config("gopls", {
+  lsp.config("gopls", {
     cmd = { "gopls" },
     filetypes = { "go", "gomod", "gowork", "gotmpl" },
     root_markers = {
@@ -251,7 +253,7 @@ local function setup_lsp_servers()
   })
 
   -- typescript
-  vim.lsp.config("ts_ls", {
+  lsp.config("ts_ls", {
     cmd = { "typescript-language-server", "--stdio" },
     filetypes = {
       "javascript",
@@ -297,12 +299,12 @@ local function setup_lsp_servers()
   })
 
   -- remember to enable
-  vim.lsp.enable("rust_analyzer")
-  vim.lsp.enable("clangd")
-  vim.lsp.enable("pylsp")
-  vim.lsp.enable("lua_ls")
-  vim.lsp.enable("gopls")
-  vim.lsp.enable("ts_ls")
+  lsp.enable("rust_analyzer")
+  lsp.enable("clangd")
+  lsp.enable("pylsp")
+  lsp.enable("lua_ls")
+  lsp.enable("gopls")
+  lsp.enable("ts_ls")
 end
 
 -- autocommands block
@@ -311,7 +313,7 @@ local function setup_autocommands()
   vim.api.nvim_create_autocmd("LspAttach", {
     group = vim.api.nvim_create_augroup("UserLspConfig", {}),
     callback = function(ev)
-      local client = vim.lsp.get_client_by_id(ev.data.client_id)
+      local client = lsp.get_client_by_id(ev.data.client_id)
       local buffer = ev.buf
 
       -- enable completion triggered by <c-x><c-o>
@@ -320,7 +322,7 @@ local function setup_autocommands()
       -- inlay hints
       if client and client.supports_method("textDocument/inlayHint") then
         if vim.api.nvim_buf_is_valid(buffer) and vim.bo[buffer].buftype == "" then
-          vim.lsp.inlay_hint.enable(true, { bufnr = buffer })
+          lsp.inlay_hint.enable(true, { bufnr = buffer })
         end
       end
 
@@ -328,11 +330,11 @@ local function setup_autocommands()
       if client and client.supports_method("textDocument/documentHighlight") then
         vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
           buffer = buffer,
-          callback = vim.lsp.buf.document_highlight,
+          callback = lsp.buf.document_highlight,
         })
         vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
           buffer = buffer,
-          callback = vim.lsp.buf.clear_references,
+          callback = lsp.buf.clear_references,
         })
       end
     end,

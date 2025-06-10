@@ -1,66 +1,79 @@
+-- semantic hell
+local opt = vim.opt
+local g = vim.g
+local fn = vim.fn
+local cmd = vim.cmd
+local api = vim.api
+local diag = vim.diagnostic
+local lsp = vim.lsp
+
 -- bootstrap lazy.nvim
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+local lazypath = fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   local lazyrepo = "https://github.com/folke/lazy.nvim.git"
-  local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+  local out = fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
   if vim.v.shell_error ~= 0 then
-    vim.api.nvim_echo({
+    api.nvim_echo({
       { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
       { out,                            "WarningMsg" },
       { "\nPress any key to exit..." },
     }, true, {})
-    vim.fn.getchar()
+    fn.getchar()
     os.exit(1)
   end
 end
-vim.opt.rtp:prepend(lazypath)
+opt.rtp:prepend(lazypath)
 
 -- ===== VIM SETTINGS =====
 
 -- mappings need to be set before loading lazy.nvim
-vim.g.mapleader = " "
-vim.g.maplocalleader = "\\"
+g.mapleader = " "
+g.maplocalleader = "\\"
 
-vim.opt.number = true
-vim.opt.relativenumber = true
+-- show line numbers on the side, have them be relative to cursor
+opt.number = true
+opt.relativenumber = true
 
--- these are defaults, but ultimately i get vim-sleuth to manage them
-vim.opt.tabstop = 2        -- Width of tab character
-vim.opt.shiftwidth = 2     -- Size of indent
-vim.opt.softtabstop = 2    -- Number of spaces in tab when editing
-vim.opt.expandtab = true   -- Convert tabs to spaces
+-- in conjunction with eagle.lua to enable lsp mouse hover windows
+opt.mousemoveevent = true
 
-vim.opt.smartindent = true -- "Smart" auto-indenting for new lines
-vim.opt.backspace = { "indent", "eol", "start" }
-vim.opt.wrap = false -- disable by default; i have alt+z bound to toggle
+-- these are my defaults, but right now i get vim-sleuth to manage them. treesitter handles smartindent
+-- opt.tabstop = 2        -- Width of tab character
+-- opt.shiftwidth = 2     -- Size of indent
+-- opt.softtabstop = 2    -- Number of spaces in tab when editing
+-- opt.expandtab = true   -- Convert tabs to spaces
+-- opt.smartindent = true -- "Smart" auto-indenting for new lines
+
+opt.backspace = { "indent", "eol", "start" }
+
+opt.wrap = false -- disable by default; i have alt+z bound to toggle
 
 -- load neotree if neovim is called on a dir.
 -- i configured neotree to only load when its hotkey is pressed (Shift+Alt+E at the moment), so this is convenient
-if vim.fn.argc() == 1 and vim.fn.isdirectory(vim.fn.argv(0)) == 1 then
+if fn.argc() == 1 and fn.isdirectory(fn.argv(0)) == 1 then
   require("neo-tree")
-  vim.cmd("Neotree focus left")
+  cmd("Neotree focus left")
 end
 
 -- when a new buffer is done loading,
 -- disable spellchecking and diagnostics (linting).
 -- lazy.nvim enables spellchecking by default, and it's a git submodule i don't want to deal with
 -- diagnostics toggle with a keybind defined below (Shift+Alt+L). lualine displays the error count either way
-vim.api.nvim_create_autocmd("BufReadPost", {
+api.nvim_create_autocmd("BufReadPost", {
   pattern = "*",
   callback = function()
     vim.opt_local.spell = false
-    vim.diagnostic.enable(false, { bufnr = 0 })
+    diag.enable(false, { bufnr = 0 })
   end,
 })
 
 -- pretty signs <3
 -- the e.g. DapBreakpoint aliases are provided by nvim-dap-ui
-vim.fn.sign_define('DapBreakpoint', { text = '🔴', texthl = '', linehl = '', numhl = '' })
-vim.fn.sign_define('DapStopped', { text = '▶️', texthl = '', linehl = '', numhl = '' })
-
+fn.sign_define('DapBreakpoint', { text = '🔴', texthl = '', linehl = '', numhl = '' })
+fn.sign_define('DapStopped', { text = '▶️', texthl = '', linehl = '', numhl = '' })
+ 
 -- ===== KEYBINDS =====
 
--- Caching this might speed up lua interpretation?
 local nmap = function(mode, keys, func, desc)
   vim.keymap.set(mode, keys, func, { desc = desc })
 end
@@ -82,14 +95,14 @@ nmap({ "n", "v" }, "<F12>", function() require('dap').step_out() end, "LSP: Step
 nmap({ "n", "v" }, "B", function() require('dap').toggle_breakpoint() end, "Toggle Breakpoint")
 
 -- nav keybinds; GOTOs. vim Ctrl+O natively returns to previous cursor position
-nmap({ "n", "v" }, "gd", vim.lsp.buf.definition, "LSP: GoTo Definition")
-nmap({ "n", "v" }, "gtd", vim.lsp.buf.type_definition, "LSP: GoTo Type Definition")
+nmap({ "n", "v" }, "gd", lsp.buf.definition, "LSP: GoTo Definition")
+nmap({ "n", "v" }, "gtd", lsp.buf.type_definition, "LSP: GoTo Type Definition")
 nmap({ "n", "v" }, "gr", function() require('fzf-lua').lsp_references() end, "GoTo References")
 
 -- UI toggle keybinds
 nmap({ "n", "v" }, "<M-E>", function()
     require('neo-tree')
-    vim.cmd("Neotree toggle left")
+    cmd("Neotree toggle left")
   end,
   "Toggle Neotree"
 )
@@ -98,12 +111,12 @@ nmap({ "n", "v" }, "<M-D>", function() require("dapui").toggle() end, "Toggle DA
 -- toggle lint display. lualine still lists warnings/errors/etc. i disable the linting by default down below
 nmap({ "n", "v" }, "<M-L>",
   function()
-    local bufnr = vim.api.nvim_get_current_buf()
-    if vim.diagnostic.is_enabled({ bufnr = bufnr }) then
-      vim.diagnostic.enable(false, { bufnr = bufnr })
+    local bufnr = api.nvim_get_current_buf()
+    if diag.is_enabled({ bufnr = bufnr }) then
+      diag.enable(false, { bufnr = bufnr })
       print("Diagnostics disabled")
     else
-      vim.diagnostic.enable(true, { bufnr = bufnr })
+      diag.enable(true, { bufnr = bufnr })
       print("Diagnostics enabled")
     end
   end,
@@ -111,21 +124,20 @@ nmap({ "n", "v" }, "<M-L>",
 )
 
 -- wrapping
-nmap({ "n", "v" }, "<M-z>", function() vim.cmd("set wrap!") end, "Toggle line-wrapping")
+nmap({ "n", "v" }, "<M-z>", function() cmd("set wrap!") end, "Toggle line-wrapping")
 
 -- LSP keybinds. elected not to attach these to an lsp buffer so they won't error silently
-nmap("n", "gD", vim.lsp.buf.declaration, "LSP: GoTo Declaration")
-nmap("n", "gI", vim.lsp.buf.implementation, "LSP: GoTo Implementation")
-nmap("n", "K", vim.lsp.buf.hover, "Hover")
-nmap("n", "gK", vim.lsp.buf.signature_help, "LSP: Signature Help")
-nmap("i", "<c-k>", vim.lsp.buf.signature_help, "LSP: Signature Help")
-nmap("n", "<leader>ca", vim.lsp.buf.code_action, "LSP: Code Action")
-nmap("v", "<leader>ca", vim.lsp.buf.code_action, "LSP: Code Action")
-nmap("n", "<leader>cr", vim.lsp.buf.rename, "LSP: Rename")
-nmap("n", "<leader>cf", function() vim.lsp.buf.format({ timeout_ms = 3000 }) end, "Format Document")
-nmap("n", "]d", vim.diagnostic.goto_next, "LSP: Next Diagnostic")
-nmap("n", "[d", vim.diagnostic.goto_prev, "LSP: Prev Diagnostic")
-nmap("n", "<leader>cd", vim.diagnostic.open_float, "LSP: Line Diagnostics")
+nmap("n", "gD", lsp.buf.declaration, "LSP: GoTo Declaration")
+nmap("n", "gI", lsp.buf.implementation, "LSP: GoTo Implementation")
+nmap("n", "gK", lsp.buf.signature_help, "LSP: Signature Help")
+nmap("i", "<c-k>", lsp.buf.signature_help, "LSP: Signature Help")
+nmap("n", "<leader>ca", lsp.buf.code_action, "LSP: Code Action")
+nmap("v", "<leader>ca", lsp.buf.code_action, "LSP: Code Action")
+nmap("n", "<leader>cr", lsp.buf.rename, "LSP: Rename")
+nmap("n", "<leader>cf", function() lsp.buf.format({ timeout_ms = 3000 }) end, "Format Document")
+nmap("n", "]d", diag.goto_next, "LSP: Next Diagnostic")
+nmap("n", "[d", diag.goto_prev, "LSP: Prev Diagnostic")
+nmap("n", "<leader>cd", diag.open_float, "LSP: Line Diagnostics")
 
 -- ===== LAZY =====
 
@@ -175,8 +187,8 @@ require("lazy").setup({
 local lsp = require("lsp")
 
 -- lazy-init the lsps themselves
-vim.api.nvim_create_autocmd({ "BufReadPre", "BufNewFile" }, {
-  group = vim.api.nvim_create_augroup("LazyLSP", { clear = true }),
+api.nvim_create_autocmd({ "BufReadPre", "BufNewFile" }, {
+  group = api.nvim_create_augroup("LazyLSP", { clear = true }),
   once = true,
   callback = function()
     lsp.setup()
