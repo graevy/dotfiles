@@ -1,6 +1,7 @@
 return {
   {
     'nvim-lualine/lualine.nvim',
+    event = "VeryLazy",
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
       require("lualine").setup {
@@ -19,7 +20,7 @@ return {
             -- Show up to 2 active LSP clients, with +N if more
             function()
               local bufnr = vim.api.nvim_get_current_buf()
-              local clients = vim.lsp.get_active_clients({ bufnr = bufnr })
+              local clients = vim.lsp.get_clients({ bufnr = bufnr })
               if not clients or vim.tbl_isempty(clients) then return "" end
 
               local max_display = 2
