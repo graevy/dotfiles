@@ -34,8 +34,14 @@ g.maplocalleader = "\\"
 opt.number = true
 opt.relativenumber = true
 
--- in conjunction with eagle.lua to enable lsp mouse hover windows
-opt.mousemoveevent = true
+-- ideally i want https://github.com/neovim/neovim/issues/989
+-- however i will settle for this for now. disable the limits on window scrolling
+opt.scrolloff = 0
+
+-- eagle.nvim likes this to do its automatic hovering. it works great
+-- unfortunately it seems to break my ability to seek my cursor via touchscreen in alacritty
+-- so eagle.nvim is relegated to keyboard mode :/
+-- opt.mousemoveevent = true
 
 -- these are my defaults, but right now i get vim-sleuth to manage them. treesitter handles smartindent
 -- opt.tabstop = 2        -- Width of tab character
@@ -75,7 +81,7 @@ fn.sign_define('DapStopped', { text = '▶️', texthl = '', linehl = '', numhl 
 -- ===== KEYBINDS =====
 
 local nmap = function(mode, keys, func, desc)
-  vim.keymap.set(mode, keys, func, { desc = desc })
+  vim.keymap.set(mode, keys, func, { desc = desc, noremap = true, silent = true })
 end
 
 -- vscode hotkeys basically
@@ -138,6 +144,9 @@ nmap("n", "<leader>cf", function() lsp.buf.format({ timeout_ms = 3000 }) end, "F
 nmap("n", "]d", diag.goto_next, "LSP: Next Diagnostic")
 nmap("n", "[d", diag.goto_prev, "LSP: Prev Diagnostic")
 nmap("n", "<leader>cd", diag.open_float, "LSP: Line Diagnostics")
+
+
+nmap("n", "K", ":EagleWin<CR>")
 
 -- ===== LAZY =====
 

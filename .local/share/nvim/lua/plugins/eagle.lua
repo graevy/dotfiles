@@ -2,6 +2,7 @@ return {
     "soulis-1256/eagle.nvim",
     event = "VeryLazy",
     opts = {
-      --override the default values found in config.lua
+      -- this is because of an alacritty issue with neovim mouseevents
+      keyboard_mode = true,
     }
 }
