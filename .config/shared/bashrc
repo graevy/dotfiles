@@ -28,7 +28,9 @@ replace() {
 yeet() {
   git add -A && git commit -m "${*:-yeet}" && git push
 }
-amend() { git add -A && git commit --amend -C HEAD "$@"; }
+amend() {
+  git add -A && git commit --amend -C HEAD "$@" && git push --force
+}
 
 # shortcuts
 alias n='nvim'
