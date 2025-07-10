@@ -50,9 +50,14 @@ opt.scrolloff = 0
 -- opt.expandtab = true   -- Convert tabs to spaces
 -- opt.smartindent = true -- "Smart" auto-indenting for new lines
 
+-- make backspace delete indents, or, function as you would expect in an IDE
 opt.backspace = { "indent", "eol", "start" }
 
-opt.wrap = false -- disable by default; i have alt+z bound to toggle
+-- disable by default; i have alt+z bound to toggle
+opt.wrap = false 
+
+-- when you return to a previous position, preserve the screen orientation
+opt.jumpoptions = "stack,view"
 
 -- load neotree if neovim is called on a dir.
 -- i configured neotree to only load when its hotkey is pressed (Shift+Alt+E at the moment), so this is convenient
@@ -105,6 +110,9 @@ nmap({ "n", "v" }, "gd", lsp.buf.definition, "LSP: GoTo Definition")
 nmap({ "n", "v" }, "gtd", lsp.buf.type_definition, "LSP: GoTo Type Definition")
 nmap({ "n", "v" }, "gr", function() require('fzf-lua').lsp_references() end, "GoTo References")
 
+-- kill the current search highlight after searching
+nmap({ "n", "v" }, "<leader>/", ":nohlsearch<CR>", "Clear search highlight")
+
 -- UI toggle keybinds
 nmap({ "n", "v" }, "<M-E>", function()
     require('neo-tree')
@@ -129,7 +137,7 @@ nmap({ "n", "v" }, "<M-L>",
   "Toggle Linting Display"
 )
 
--- wrapping
+-- (word) wrapping
 nmap({ "n", "v" }, "<M-z>", function() cmd("set wrap!") end, "Toggle line-wrapping")
 
 -- LSP keybinds. elected not to attach these to an lsp buffer so they won't error silently
@@ -145,7 +153,7 @@ nmap("n", "]d", diag.goto_next, "LSP: Next Diagnostic")
 nmap("n", "[d", diag.goto_prev, "LSP: Prev Diagnostic")
 nmap("n", "<leader>cd", diag.open_float, "LSP: Line Diagnostics")
 
-
+-- eagle.nvim keyboard mode hover diagnostics
 nmap("n", "K", ":EagleWin<CR>")
 
 -- ===== LAZY =====

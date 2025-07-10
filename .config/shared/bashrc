@@ -22,7 +22,7 @@ please() { sudo $(fc -ln -1); }
 rmv() { mv "$@" /tmp; }
 rmtmp() { sudo rm -rf /tmp/* /tmp/.*; }
 replace() {
-  # finds-and-replaces all instances of $1 with $2 in files in cwd
+  # finds-and-replaces all instances of $1 with $2 inside files
   find . -type f -print0 | xargs -0 sed -i "s/${1//\//\\/}/${2//\//\\/}/g"
 }
 yeet() {
@@ -72,8 +72,8 @@ sedd() {
   rm $tf
 }
 
-# nix-specific tooling
-rebuild() { su -c 'nixos-rebuild switch --show-trace'; }
+# nixos-specific tooling
+rebuild() { su -c "nixos-rebuild switch --show-trace $@"; }
 nixnix() { su -c "nix-env --delete-generations +$@ --profile /nix/var/nix/profiles/system"; }
 ns() { nix-shell -p "$@"; }
 
