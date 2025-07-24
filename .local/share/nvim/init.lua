@@ -59,13 +59,6 @@ opt.wrap = false
 -- when you return to a previous position, preserve the screen orientation
 opt.jumpoptions = "stack,view"
 
--- load neotree if neovim is called on a dir.
--- i configured neotree to only load when its hotkey is pressed (Shift+Alt+E at the moment), so this is convenient
-if fn.argc() == 1 and fn.isdirectory(fn.argv(0)) == 1 then
-  require("neo-tree")
-  cmd("Neotree focus left")
-end
-
 -- when a new buffer is done loading,
 -- disable spellchecking and diagnostics (linting).
 -- lazy.nvim enables spellchecking by default, and it's a git submodule i don't want to deal with
@@ -97,12 +90,12 @@ nmap("n", "<Tab>", ">>", "Indent Line")
 nmap("n", "<S-Tab>", "<<", "Unindent Line")
 
 -- debug keybinds
-nmap({ "n", "v" }, "<F5>", function() require('dap').continue() end, "LSP: Start/Continue")
-nmap({ "n", "v" }, "<F6>", function() require('dap').terminate() end, "LSP: Terminate")
-nmap({ "n", "v" }, "<F7>", function() require('dap').run_last() end, "LSP: Run Last")
-nmap({ "n", "v" }, "<F10>", function() require('dap').step_over() end, "LSP: Step Over")
-nmap({ "n", "v" }, "<F11>", function() require('dap').step_into() end, "LSP: Step Into")
-nmap({ "n", "v" }, "<F12>", function() require('dap').step_out() end, "LSP: Step Out")
+nmap({ "n", "v", "i" }, "<F5>", function() require('dap').continue() end, "LSP: Start/Continue")
+nmap({ "n", "v", "i" }, "<F6>", function() require('dap').terminate() end, "LSP: Terminate")
+nmap({ "n", "v", "i" }, "<F7>", function() require('dap').run_last() end, "LSP: Run Last")
+nmap({ "n", "v", "i" }, "<F10>", function() require('dap').step_over() end, "LSP: Step Over")
+nmap({ "n", "v", "i" }, "<F11>", function() require('dap').step_into() end, "LSP: Step Into")
+nmap({ "n", "v", "i" }, "<F12>", function() require('dap').step_out() end, "LSP: Step Out")
 nmap({ "n", "v" }, "B", function() require('dap').toggle_breakpoint() end, "Toggle Breakpoint")
 
 -- nav keybinds; GOTOs. vim Ctrl+O natively returns to previous cursor position
@@ -114,16 +107,16 @@ nmap({ "n", "v" }, "gr", function() require('fzf-lua').lsp_references() end, "Go
 nmap({ "n", "v" }, "<leader>/", ":nohlsearch<CR>", "Clear search highlight")
 
 -- UI toggle keybinds
-nmap({ "n", "v" }, "<M-E>", function()
+nmap({ "n", "v", "i" }, "<M-E>", function()
     require('neo-tree')
     cmd("Neotree toggle left")
   end,
   "Toggle Neotree"
 )
-nmap({ "n", "v" }, "<M-D>", function() require("dapui").toggle() end, "Toggle DAP (Debugging) UI")
+nmap({ "n", "v", "i" }, "<M-D>", function() require("dapui").toggle() end, "Toggle DAP (Debugging) UI")
 
 -- toggle lint display. lualine still lists warnings/errors/etc. i disable the linting by default down below
-nmap({ "n", "v" }, "<M-L>",
+nmap({ "n", "v", "i" }, "<M-L>",
   function()
     local bufnr = api.nvim_get_current_buf()
     if diag.is_enabled({ bufnr = bufnr }) then
@@ -138,7 +131,7 @@ nmap({ "n", "v" }, "<M-L>",
 )
 
 -- (word) wrapping
-nmap({ "n", "v" }, "<M-z>", function() cmd("set wrap!") end, "Toggle line-wrapping")
+nmap({ "n", "v", "i" }, "<M-z>", function() cmd("set wrap!") end, "Toggle line-wrapping")
 
 -- LSP keybinds. elected not to attach these to an lsp buffer so they won't error silently
 nmap("n", "gD", lsp.buf.declaration, "LSP: GoTo Declaration")
@@ -199,6 +192,15 @@ require("lazy").setup({
     },
   },
 })
+
+-- ===== POST LAZY CONFIGS =====
+
+-- load neotree if neovim is called on a dir.
+-- i configured neotree to only load when its hotkey is pressed (Shift+Alt+E at the moment), so this is convenient
+if fn.argc() == 1 and fn.isdirectory(fn.argv(0)) == 1 then
+  require("neo-tree")
+  cmd("Neotree focus left")
+end
 
 -- ===== LSPs =====
 local lsp = require("lsp")
