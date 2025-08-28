@@ -14,9 +14,9 @@ return {
       }
     }
 
-    dap.adapters.python = {
+    dap.adapters.debugpy = {
       type = 'executable',
-      command = 'python',
+      command = vim.fn.exepath("python3"),
       args = { '-m', 'debugpy.adapter' },
     }
 
@@ -46,7 +46,7 @@ return {
 
     dap.configurations.python = {
       {
-        type = 'python',
+        type = 'debugpy',
         request = 'launch',
         name = "Launch file",
         program = "${file}",

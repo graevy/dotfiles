@@ -155,6 +155,7 @@ require("lazy").setup({
   spec = {
     -- ~/.local/share/nvim/lua/plugins/, the whole folder (but not subdirs)
     { import = "plugins" },
+    -- temporarily manually disable here, e.g. { "some/plugin", enabled = false },
   },
   change_detection = {
     enabled = true,

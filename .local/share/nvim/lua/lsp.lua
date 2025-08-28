@@ -129,7 +129,7 @@ local function setup_lsp_servers()
   -- python
   lsp.config("pylsp", {
     cmd = { "pylsp" },
-    filetypes = { "python" },
+    filetypes = { "py", "python" },
     root_markers = {
       "pyproject.toml",
       "setup.py",
