@@ -15,7 +15,10 @@ alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....='cd ../../../..'
+
 cs() { cd "$1" && la "${@:2}"; }
+complete -F _cd cs # complete cs like cd
+
 mkcd() { mkdir -p $1 && cd $1; }
 cdt() { cd $(mktemp -d); }
 please() { sudo $(fc -ln -1); }
@@ -77,5 +80,13 @@ rebuild() { su -c "nixos-rebuild switch --show-trace $@"; }
 nixnix() { su -c "nix-env --delete-generations +$@ --profile /nix/var/nix/profiles/system"; }
 ns() { nix-shell -p "$@"; }
 
+# temporary tooling
+alias kcore='KUBECONFIG=~/.kube/coreconfig kubectl'
+alias ktalos='KUBECONFIG=~/.kube/talosconfig kubectl'
+
 # :^)
 #troll() { ls $@ -Ad . ..; }
+
+# https://direnv.net/docs/hook.html
+eval "$(direnv hook bash)"
+
