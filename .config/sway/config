@@ -128,6 +128,9 @@ input "4809:8195:SOAI_USB_Gaming_Mouse" {
     bindsym $mod+Shift+0 move container to workspace number 10
     # Note: workspaces can have any name you want, not just numbers.
     # We just use 1-10 as the default.
+
+    # move to the previous workspace!
+    bindsym $mod+grave workspace back_and_forth
 #
 # Layout stuff:
 #
