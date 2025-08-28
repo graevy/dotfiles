@@ -20,6 +20,7 @@ volume = "\uE001"
 volume_muted = "\uE002"
 backlight = "\uE00E"
 
+# https://greshake.github.io/i3status-rust/i3status_rs/blocks/index.html
 
 # display active networkmanager connections
 [[block]]
@@ -63,6 +64,8 @@ format = "$icon$mem_avail.eng(w:3)"
 # whenever nixpkgs merges i think it was commit 2043, that adds range to formatting/formatter.rs
 # not going to bother attempting to display swap until that time as it is pretty much always 0 unless crashing
 #format = "$icon$mem_avail.eng(w:3)$swap_used.eng(range:1.., pad_with:' ')"
+warning_mem = 70
+critical_mem = 83
 
 [[block]]
 block = "disk_space"
