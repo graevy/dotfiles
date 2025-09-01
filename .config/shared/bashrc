@@ -24,15 +24,16 @@ cdt() { cd $(mktemp -d); }
 please() { sudo $(fc -ln -1); }
 rmv() { mv "$@" /tmp; }
 rmtmp() { sudo rm -rf /tmp/* /tmp/.*; }
+# finds-and-replaces all instances of $1 with $2 inside files inside $3 (defaults to current dir)
+# the complicated replace block is to escape & in sed which is treated as matched text i think
 replace() {
-  # finds-and-replaces all instances of $1 with $2 inside files
-  find . -type f -print0 | xargs -0 sed -i "s/${1//\//\\/}/${2//\//\\/}/g"
+  find "${3:-.}" -type f -print0 | xargs -0 sed -i "s|$1|${2//&/\\&}|g"
 }
-yeet() {
-  git add -A && git commit -m "${*:-yeet}" && git push
-}
-amend() {
-  git add -A && git commit --amend -C HEAD "$@" && git push --force
+# pull all nested files into $1 (defaults to .)
+# duplicate files don't get moved nor their dirs deleted (with mv -n)
+flatten () {
+  find "${1:-.}" -mindepth 2 -type f -exec mv -n -t . {} +
+  find "${1:-.}" -mindepth 1 -type d -empty -delete
 }
 
 # shortcuts
@@ -57,6 +58,12 @@ alias ytdla="yt-dlp -x --audio-format opus --add-metadata -o '%(title)s.%(ext)s'
 ish() { ssh -o StrictHostKeyChecking=no "$@"; }
 icp() { scp -o StrictHostKeyChecking=no "$@"; }
 irc() { irssi -n ${NICKNAME:-$USER}; }
+yeet() {
+  git add -A && git commit -m "${*:-yeet}" && git push
+}
+amend() {
+  git add -A && git commit --amend -C HEAD "$@" && git push --force
+}
 nvimswap() { rmv ~/.local/state/nvim/swap/*; }
 
 # sed debugger. don't ask
