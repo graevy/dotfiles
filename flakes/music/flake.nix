@@ -10,6 +10,7 @@
     flake-utils.lib.eachDefaultSystem (system: {
       devShells.default = nixpkgs.legacyPackages.${system}.mkShell {
         buildInputs = with nixpkgs.legacyPackages.${system}; [
+          ffmpeg
           kid3-cli
           flacon
           monkeysAudio
