@@ -86,10 +86,11 @@ sedd() {
 rebuild() { su -c "nixos-rebuild switch --show-trace $@"; }
 nixnix() { su -c "nix-env --delete-generations +$@ --profile /nix/var/nix/profiles/system"; }
 ns() { nix-shell -p "$@"; }
+nd() { nix develop; }
 
 # temporary tooling
 alias kcore='KUBECONFIG=~/.kube/coreconfig kubectl'
-alias ktalos='KUBECONFIG=~/.kube/talosconfig kubectl'
+alias kmember='KUBECONFIG=~/.kube/memberprodconfig kubectl'
 
 # :^)
 #troll() { ls $@ -Ad . ..; }
