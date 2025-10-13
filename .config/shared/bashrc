@@ -83,7 +83,7 @@ sedd() {
 }
 
 # nixos-specific tooling
-rebuild() { su -c "nixos-rebuild switch --show-trace $@"; }
+rebuild() { su -c "nixos-rebuild switch --show-trace --flake /etc/nixos#a $@"; }
 nixnix() { su -c "nix-env --delete-generations +$@ --profile /nix/var/nix/profiles/system"; }
 ns() { nix-shell -p "$@"; }
 nd() { nix develop; }

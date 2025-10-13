@@ -53,8 +53,8 @@ opt.scrolloff = 0
 -- make backspace delete indents, or, function as you would expect in an IDE
 opt.backspace = { "indent", "eol", "start" }
 
--- disable by default; i have alt+z bound to toggle
-opt.wrap = false 
+-- enable by default; i have alt+z bound to toggle
+opt.wrap = true
 
 -- when you return to a previous position, preserve the screen orientation
 opt.jumpoptions = "stack,view"
