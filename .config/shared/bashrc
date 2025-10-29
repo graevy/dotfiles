@@ -64,7 +64,10 @@ yeet() {
 amend() {
   git add -A && git commit --amend -C HEAD "$@" && git push --force
 }
-nvimswap() { rmv ~/.local/state/nvim/swap/*; }
+# what `kubectl get all` should be
+kgetall() {
+  kubectl get $(kubectl api-resources --verbs=list --namespaced -o name | paste -sd,) --show-kind --ignore-not-found "$@"
+}
 
 # sed debugger. don't ask
 sedd() {
