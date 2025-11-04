@@ -43,9 +43,10 @@ opt.scrolloff = 0
 -- so eagle.nvim is relegated to keyboard mode :/
 -- opt.mousemoveevent = true
 
--- these are my defaults, but right now i get vim-sleuth to manage them. treesitter handles smartindent
--- opt.tabstop = 2        -- Width of tab character
--- opt.shiftwidth = 2     -- Size of indent
+-- these are my defaults. treesitter handles smartindent
+-- vim-sleuth normally manages but if it can't detect spaces/tabs it falls back to tabstop=8
+opt.tabstop = 4        -- Width of tab character
+opt.shiftwidth = 4     -- Size of indent
 -- opt.softtabstop = 2    -- Number of spaces in tab when editing
 -- opt.expandtab = true   -- Convert tabs to spaces
 -- opt.smartindent = true -- "Smart" auto-indenting for new lines
