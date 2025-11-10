@@ -46,6 +46,7 @@ alias ck='git checkout'
 alias k='kubectl'
 alias py='python'
 alias wlc='wl-copy'
+alias wlp='wl-paste'
 
 # esoteric tooling
 alias freeze='su -c "echo freeze > /sys/power/state"'
