@@ -60,10 +60,7 @@ interval = 10
 
 [[block]]
 block = "memory"
-format = "$icon$mem_avail.eng(w:3)"
-# whenever nixpkgs merges i think it was commit 2043, that adds range to formatting/formatter.rs
-# not going to bother attempting to display swap until that time as it is pretty much always 0 unless crashing
-#format = "$icon$mem_avail.eng(w:3)$swap_used.eng(range:1.., pad_with:' ')"
+format = "$icon$mem_avail.eng(w:3) $swap_used.eng(w:3)"
 warning_mem = 70
 critical_mem = 83
 
