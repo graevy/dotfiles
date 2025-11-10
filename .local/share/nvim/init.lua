@@ -45,10 +45,11 @@ opt.scrolloff = 0
 
 -- these are my defaults. treesitter handles smartindent
 -- vim-sleuth normally manages but if it can't detect spaces/tabs it falls back to tabstop=8
-opt.tabstop = 4        -- Width of tab character
-opt.shiftwidth = 4     -- Size of indent
--- opt.softtabstop = 2    -- Number of spaces in tab when editing
--- opt.expandtab = true   -- Convert tabs to spaces
+-- since this behavior is terrible, manually override here
+opt.tabstop = 3        -- Width of tab character
+opt.shiftwidth = 3     -- Size of indent
+opt.softtabstop = 3    -- Number of spaces in tab when editing
+opt.expandtab = false  -- true = convert tabs to spaces
 -- opt.smartindent = true -- "Smart" auto-indenting for new lines
 
 -- make backspace delete indents, or, function as you would expect in an IDE
@@ -56,6 +57,9 @@ opt.backspace = { "indent", "eol", "start" }
 
 -- enable by default; i have alt+z bound to toggle
 opt.wrap = true
+
+-- case-insensitive matching by default
+opt.ignorecase = true
 
 -- when you return to a previous position, preserve the screen orientation
 opt.jumpoptions = "stack,view"
@@ -158,6 +162,7 @@ require("lazy").setup({
     { import = "plugins" },
     -- temporarily manually disable here, e.g. { "some/plugin", enabled = false },
     { "snacks.nvim", enabled = false },
+    { "vim-sleuth", enabled = false },
   },
   change_detection = {
     enabled = true,
