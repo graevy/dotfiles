@@ -260,30 +260,37 @@ bindsym XF86AudioMicMute exec --no-startup-id wpctl set-mute @DEFAULT_SOURCE@ to
 
 bindsym $mod+Mod1+L exec swaylock -c 000000
 
-## Grimshot screenshots. Lifted these from https://discourse.nixos.org/t/screenshots-on-hyprland-on-nixos/29055/3. Probably want to be using home-manager for the xdg dirs at some point
-bindsym Print "exec ${grimshot} --notify save screen $(${xdg-user-dir} PICTURES)/$(TZ=utc date +'screenshot_%Y-%m-%d-%H%M%S.%3N.png')"
-# All visible outputs
-bindsym Shift+Print "exec ${grimshot} --notify save area $(${xdg-user-dir} PICTURES)/$(TZ=utc date +'screenshot_%Y-%m-%d-%H%M%S.%3N.png')"
-# Manually select a region
-bindsym Mod1+Print "exec ${grimshot} --notify save active $(${xdg-user-dir} PICTURES)/$(TZ=utc date +'screenshot_%Y-%m-%d-%H%M%S.%3N.png')"
- # Currently active window
-bindsym Shift+Mod1+Print "exec ${grimshot} --notify save window $(${xdg-user-dir} PICTURES)/$(TZ=utc date +'screenshot_%Y-%m-%d-%H%M%S.%3N.png')"
-# Manually select a window
-bindsym Ctrl+Print exec ${grimshot} --notify copy screen
-bindsym Ctrl+Shift+Print exec ${grimshot} --notify copy area
-bindsym Ctrl+Mod1+Print exec ${grimshot} --notify copy active
-bindsym Ctrl+Shift+Mod1+Print exec ${grimshot} --notify copy window
-## Screen recording
-bindsym $mod+Print exec wayrecorder --notify screen
-bindsym $mod+Shift+Print exec wayrecorder --notify --input area
-bindsym $mod+Mod1+Print exec wayrecorder --notify --input active
-bindsym $mod+Shift+Mod1+Print exec wayrecorder --notify --input window
-bindsym $mod+Ctrl+Print exec wayrecorder --notify --clipboard --input screen
-bindsym $mod+Ctrl+Shift+Print exec wayrecorder --notify --clipboard --input area
-bindsym $mod+Ctrl+Mod1+Print exec wayrecorder --notify --clipboard --input active
-bindsym $mod+Ctrl+Shift+Mod1+Print exec wayrecorder --notify --clipboard --input window
+###################
+### Screenshots ###
+###################
 
-# need to test this out
-bindsym $mod+p exec grim -g "$(slurp)" - | swappy -f -
+bindsym Print exec --no-startup-id sh -c "slurp | grim -g - \"$HOME/Pictures/$(TZ=utc date +'screenshot_%Y-%m-%d_%H-%M-%S.png')\""
+
+# Copy the image without writing it
+bindsym Ctrl+Print exec --no-startup-id sh -c 'slurp | grim -g - - | wl-copy --type image/png'
+
+# Write image, then copy filepath
+bindsym Ctrl+Shift+Print exec --no-startup-id sh -c '\
+path="$HOME/Pictures/$(TZ=utc date +"screenshot_%Y-%m-%d_%H-%M-%S.png")"; \
+slurp | grim -g - "$path" && printf "%s" "$path" | wl-copy'
+
+# I guess if you ever wanted to tee it
+# bindsym Ctrl+Shift+Print exec --no-startup-id sh -c '
+#   fp="$HOME/Pictures/$(TZ=utc date +"screenshot_%Y-%m-%d-%H%M%S.png")";
+#   slurp | grim -g - "$fp" &&
+#   grim -g "$(slurp)" - - | wl-copy --type image/png
+# '
+
+## Screen recording?
+# bindsym $mod+Print exec wayrecorder --notify screen
+# bindsym $mod+Shift+Print exec wayrecorder --notify --input area
+# bindsym $mod+Mod1+Print exec wayrecorder --notify --input active
+# bindsym $mod+Shift+Mod1+Print exec wayrecorder --notify --input window
+# bindsym $mod+Ctrl+Print exec wayrecorder --notify --clipboard --input screen
+# bindsym $mod+Ctrl+Shift+Print exec wayrecorder --notify --clipboard --input area
+# bindsym $mod+Ctrl+Mod1+Print exec wayrecorder --notify --clipboard --input active
+# bindsym $mod+Ctrl+Shift+Mod1+Print exec wayrecorder --notify --clipboard --input window
+
 
 include /etc/sway/config.d/*
+
