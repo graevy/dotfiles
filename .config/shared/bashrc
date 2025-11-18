@@ -90,7 +90,12 @@ sedd() {
 rebuild() { su -c "nixos-rebuild switch --show-trace --flake /etc/nixos#a $@"; }
 nixnix() { su -c "nix-env --delete-generations +$@ --profile /nix/var/nix/profiles/system"; }
 ns() { nix-shell -p "$@"; }
-nd() { nix develop; }
+nd() {
+	if [ -n "$1" ]; then
+		cd "$1" || return
+	fi
+	nix develop
+}
 
 # temporary tooling
 alias kcore='KUBECONFIG=~/.kube/coreconfig kubectl'
