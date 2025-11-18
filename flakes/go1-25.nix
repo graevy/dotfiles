@@ -9,6 +9,9 @@
   outputs = { self, nixpkgs, flake-utils }:
     flake-utils.lib.eachDefaultSystem (system: {
       devShells.default = nixpkgs.legacyPackages.${system}.mkShell {
+		  nativeBuildInputs = with nixpkgs.legacyPackages.${system}; [
+          gcc 
+        ];
         buildInputs = with nixpkgs.legacyPackages.${system}; [
           go_1_25
           gopls
@@ -17,8 +20,9 @@
         ];
 
         shellHook = ''
-          export GOPATH=$HOME/go
-          export PATH=$GOPATH/bin:$PATH
+			export GOPATH=$HOME/go
+			export PATH=$GOPATH/bin:$PATH
+			export CGO_CFLAGS="-O2"
         '';
       };
     });
