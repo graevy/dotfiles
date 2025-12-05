@@ -6,7 +6,13 @@ return {
   },
   event = "VeryLazy",
   opts = {
-    -- NOTE: The log_level is in `opts.opts`
+	 strategies = {
+		chat = {
+		  adapter = "anthropic",
+		  model = "claude-sonnet-4-20250514"
+		},
+	 },
+	 -- opts.opts
     opts = {
       log_level = "DEBUG", -- or "TRACE"
     },
