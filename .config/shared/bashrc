@@ -15,10 +15,8 @@ alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....='cd ../../../..'
-
 cs() { cd "$1" && la "${@:2}"; }
 complete -F _cd cs # complete cs like cd
-
 mkcd() { mkdir -p $1 && cd $1; }
 cdt() { cd $(mktemp -d); }
 please() { sudo $(fc -ln -1); }
@@ -31,17 +29,14 @@ replace() {
 }
 # pull all nested files into $1 (defaults to .)
 # duplicate files don't get moved nor their dirs deleted (with mv -n)
-flatten () {
+flatten() {
   find "${1:-.}" -mindepth 2 -type f -exec mv -n -t . {} +
   find "${1:-.}" -mindepth 1 -type d -empty -delete
 }
 
-# shortcuts
+# common shortcuts
 alias n='nvim'
 alias v='vim'
-alias s='git status'
-alias d='git diff'
-alias ck='git checkout'
 alias k='kubectl'
 alias py='python'
 alias wlc='wl-copy'
@@ -58,36 +53,7 @@ alias ytdla="yt-dlp -x --audio-format opus --add-metadata -o '%(title)s.%(ext)s'
 ish() { ssh -o StrictHostKeyChecking=no "$@"; }
 icp() { scp -o StrictHostKeyChecking=no "$@"; }
 irc() { irssi -n ${NICKNAME:-$USER}; }
-yeet() {
-  git add -A && git commit -m "${*:-yeet}" && git push
-}
-amend() {
-  git add -A && git commit --amend -C HEAD "$@" && git push --force
-}
-c() {
-    args=("$@")
-    last="${args[-1]}"
-    unset 'args[-1]'
-    git add "${args[@]}" && git commit -m "$last"
-}
-complete -o default -o filenames commit
-
-# what `kubectl get all` should be. i don't want to see events though
-kgetall() {
-  kubectl get $(kubectl api-resources --verbs=list --namespaced -o name | grep -v "^events" | paste -sd,) --show-kind --ignore-not-found "$@"
-}
-
-# remove finalizers from object
-kkill() {
-	if [[ $# -eq 2 ]]; then
-      # case: cluster-wide non-namespaced resource 
-		kubectl patch $1 $2 --type merge -p '{"metadata":{"finalizers":null}}'
-	else
-		kubectl -n $1 patch $2 $3 --type merge -p '{"metadata":{"finalizers":null}}'
-	fi
-}
-
-# sed debugger. don't ask
+# sed debugger
 sedd() {
   tf=$(mktemp)
   # this line runs "sed $@" and then redirects stderr to tee to debug sed
@@ -103,7 +69,43 @@ sedd() {
   rm $tf
 }
 
-# nixos-specific tooling
+######### git tooling #########
+alias s='git status'
+alias d='git diff'
+alias ck='git checkout'
+yeet() {
+  git add -A && git commit -m "${*:-yeet}" && git push
+}
+amend() {
+  git add -A && git commit --amend -C HEAD "$@" && git push --force
+}
+# commit files, use last arg as message
+c() {
+    args=("$@")
+    last="${args[-1]}"
+    unset 'args[-1]'
+    git add "${args[@]}" && git commit -m "$last"
+}
+complete -o default -o filenames commit
+
+######### k8s tooling #########
+alias kcore='KUBECONFIG=~/.kube/coreconfig'
+alias kmem='KUBECONFIG=~/.kube/memberprodconfig'
+# what `kubectl get all` should be. i don't want to see events though
+kgetall() {
+  kubectl get $(kubectl api-resources --verbs=list --namespaced -o name | grep -v "^events" | paste -sd,) --show-kind --ignore-not-found "$@"
+}
+# remove finalizers from object
+kkill() {
+	if [[ $# -eq 2 ]]; then
+      # case: cluster-wide non-namespaced resource 
+		kubectl patch $1 $2 --type merge -p '{"metadata":{"finalizers":null}}'
+	else
+		kubectl -n $1 patch $2 $3 --type merge -p '{"metadata":{"finalizers":null}}'
+	fi
+}
+
+######### nixos tooling #########
 rebuild() { su -c "nixos-rebuild switch --show-trace --flake /etc/nixos#a $@"; }
 nixnix() { su -c "nix-env --delete-generations +$@ --profile /nix/var/nix/profiles/system"; }
 ns() { nix-shell -p "$@"; }
@@ -113,10 +115,6 @@ nd() {
 	fi
 	nix develop
 }
-
-# temporary tooling
-alias kcore='KUBECONFIG=~/.kube/coreconfig'
-alias kmem='KUBECONFIG=~/.kube/memberprodconfig'
 
 # :^)
 #troll() { ls $@ -Ad . ..; }
