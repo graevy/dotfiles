@@ -72,9 +72,19 @@ c() {
 }
 complete -o default -o filenames commit
 
-# what `kubectl get all` should be
+# what `kubectl get all` should be. i don't want to see events though
 kgetall() {
-  kubectl get $(kubectl api-resources --verbs=list --namespaced -o name | paste -sd,) --show-kind --ignore-not-found "$@"
+  kubectl get $(kubectl api-resources --verbs=list --namespaced -o name | grep -v "^events" | paste -sd,) --show-kind --ignore-not-found "$@"
+}
+
+# remove finalizers from object
+kkill() {
+	if [[ $# -eq 2 ]]; then
+      # case: cluster-wide non-namespaced resource 
+		kubectl patch $1 $2 --type merge -p '{"metadata":{"finalizers":null}}'
+	else
+		kubectl -n $1 patch $2 $3 --type merge -p '{"metadata":{"finalizers":null}}'
+	fi
 }
 
 # sed debugger. don't ask
@@ -105,8 +115,8 @@ nd() {
 }
 
 # temporary tooling
-alias kcore='KUBECONFIG=~/.kube/coreconfig kubectl'
-alias kmember='KUBECONFIG=~/.kube/memberprodconfig kubectl'
+alias kcore='KUBECONFIG=~/.kube/coreconfig'
+alias kmem='KUBECONFIG=~/.kube/memberprodconfig'
 
 # :^)
 #troll() { ls $@ -Ad . ..; }
