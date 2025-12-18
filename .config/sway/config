@@ -115,6 +115,17 @@ input "4809:8195:SOAI_USB_Gaming_Mouse" {
     bindsym $mod+8 workspace number 8
     bindsym $mod+9 workspace number 9
     bindsym $mod+0 workspace number 10
+	 bindsym $mod+F1 workspace "f1"
+    bindsym $mod+F2 workspace "f2"
+    bindsym $mod+F3 workspace "f3"
+    bindsym $mod+F4 workspace "f4"
+    bindsym $mod+F5 workspace "f5"
+    bindsym $mod+F6 workspace "f6"
+    bindsym $mod+F7 workspace "f7"
+    bindsym $mod+F8 workspace "f8"
+    bindsym $mod+F9 workspace "f9"
+    bindsym $mod+F10 workspace "f0"
+
     # Move focused container to workspace
     bindsym $mod+Shift+1 move container to workspace number 1
     bindsym $mod+Shift+2 move container to workspace number 2
@@ -126,6 +137,16 @@ input "4809:8195:SOAI_USB_Gaming_Mouse" {
     bindsym $mod+Shift+8 move container to workspace number 8
     bindsym $mod+Shift+9 move container to workspace number 9
     bindsym $mod+Shift+0 move container to workspace number 10
+	 bindsym $mod+Shift+F1 move container to workspace "f1"
+    bindsym $mod+Shift+F2 move container to workspace "f2"
+    bindsym $mod+Shift+F3 move container to workspace "f3"
+    bindsym $mod+Shift+F4 move container to workspace "f4"
+    bindsym $mod+Shift+F5 move container to workspace "f5"
+    bindsym $mod+Shift+F6 move container to workspace "f6"
+    bindsym $mod+Shift+F7 move container to workspace "f7"
+    bindsym $mod+Shift+F8 move container to workspace "f8"
+    bindsym $mod+Shift+F9 move container to workspace "f9"
+    bindsym $mod+Shift+F10 move container to workspace "f0"
     # Note: workspaces can have any name you want, not just numbers.
     # We just use 1-10 as the default.
 
