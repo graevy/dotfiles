@@ -48,7 +48,7 @@ opt.scrolloff = 0
 -- since this behavior is terrible, manually override here
 opt.tabstop = 3        -- Width of tab character
 opt.shiftwidth = 3     -- Size of indent
-opt.softtabstop = 3    -- Number of spaces in tab when editing
+opt.softtabstop = 2    -- Number of spaces in tab when editing
 opt.expandtab = false  -- true = convert tabs to spaces
 -- opt.smartindent = true -- "Smart" auto-indenting for new lines
 
@@ -80,9 +80,8 @@ api.nvim_create_autocmd("BufReadPost", {
 -- the e.g. DapBreakpoint aliases are provided by nvim-dap-ui
 fn.sign_define('DapBreakpoint', { text = '🔴', texthl = '', linehl = '', numhl = '' })
 fn.sign_define('DapStopped', { text = '▶️', texthl = '', linehl = '', numhl = '' })
- 
--- ===== KEYBINDS =====
 
+-- ===== KEYBINDS =====
 local nmap = function(mode, keys, func, desc)
   vim.keymap.set(mode, keys, func, { desc = desc, noremap = true, silent = true })
 end
@@ -158,7 +157,6 @@ nmap("n", "<leader>cd", diag.open_float, "LSP: Line Diagnostics")
 nmap("n", "K", ":EagleWin<CR>")
 
 -- ===== LAZY =====
-
 require("lazy").setup({
   spec = {
     -- ~/.local/share/nvim/lua/plugins/, the whole folder (but not subdirs)
@@ -199,7 +197,7 @@ require("lazy").setup({
         "optwin",
         "compiler",
         "bugreport",
-        "ftplugin",
+		  "ftplugin",
       },
     },
   },
@@ -215,14 +213,57 @@ if fn.argc() == 1 and fn.isdirectory(fn.argv(0)) == 1 then
 end
 
 -- ===== LSPs =====
-local lsp = require("lsp")
+-- 1. Global Diagnostic UI
+vim.diagnostic.config({
+  underline = true,
+  update_in_insert = false,
+  virtual_text = { spacing = 4, source = "if_many", prefix = "●" },
+  severity_sort = true,
+  signs = {
+    text = {
+      [vim.diagnostic.severity.ERROR] = "E",
+      [vim.diagnostic.severity.WARN] = "W",
+      [vim.diagnostic.severity.HINT] = "H",
+      [vim.diagnostic.severity.INFO] = "I",
+    },
+  },
+})
+
+-- 2. Global LSP Attachment Logic
+vim.api.nvim_create_autocmd("LspAttach", {
+  group = vim.api.nvim_create_augroup("UserLspConfig", { clear = true }),
+  callback = function(ev)
+    local client = vim.lsp.get_client_by_id(ev.data.client_id)
+    local buffer = ev.buf
+
+    -- omnifunc, keymaps, and inlay hints
+    vim.bo[buffer].omnifunc = "v:lua.vim.lsp.omnifunc"
+
+    if client and client.supports_method("textDocument/inlayHint") then
+      vim.lsp.inlay_hint.enable(true, { bufnr = buffer })
+    end
+
+    -- document highlight logic
+    if client and client.supports_method("textDocument/documentHighlight") then
+      local group = vim.api.nvim_create_augroup("LspHighlight", { clear = false })
+      vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+        buffer = buffer, group = group, callback = vim.lsp.buf.document_highlight,
+      })
+      vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+        buffer = buffer, group = group, callback = vim.lsp.buf.clear_references,
+      })
+    end
+  end,
+})
 
 -- lazy-init the lsps themselves
+local lsps = require("lsp")
+
 api.nvim_create_autocmd({ "BufReadPre", "BufNewFile" }, {
   group = api.nvim_create_augroup("LazyLSP", { clear = true }),
   once = true,
   callback = function()
-    lsp.setup()
+    lsps.setup()
   end,
 })
 
