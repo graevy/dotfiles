@@ -106,7 +106,7 @@ kkill() {
 }
 
 ######### nixos tooling #########
-rebuild() { su -c "nixos-rebuild switch --show-trace --flake /etc/nixos#a $@"; }
+rebuild() { su -c "nixos-rebuild switch --flake /etc/nixos#a $@"; }
 nixnix() { su -c "nix-env --delete-generations +$@ --profile /nix/var/nix/profiles/system"; }
 ns() { nix-shell -p "$@"; }
 nd() {
