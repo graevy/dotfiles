@@ -68,6 +68,13 @@ sedd() {
   } >&2
   rm $tf
 }
+# silent neovim; attempt to not disturb mtime
+svi() {
+  local file="$1"
+  local ts=$(stat -c %y "$file")
+  nvim "$file"
+  touch -d "$ts" "$file"
+}
 
 ######### git tooling #########
 alias s='git status'
@@ -105,9 +112,10 @@ kkill() {
 	fi
 }
 
-######### nixos tooling #########
-rebuild() { su -c "nixos-rebuild switch --flake /etc/nixos#a $@"; }
+######### nix/os tooling #########
+rebuild() { su -c "nixos-rebuild switch --flake $@"; }
 nixnix() { su -c "nix-env --delete-generations +$@ --profile /nix/var/nix/profiles/system"; }
+
 ns() { nix-shell -p "$@"; }
 nd() {
 	if [ -n "$1" ]; then
