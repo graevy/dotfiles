@@ -16,41 +16,17 @@ set $right l
 set $term alacritty
 # Note: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
-set $menu dmenu_path | wmenu | xargs swaymsg exec --
+set $menu dmenu_run
 
 # (more resolutions are available in /run/current-system/sw/share/backgrounds/sway/)
-output * bg background.png tile
+# output * bg background.png tile
 
-# You can get the names of your outputs by running: swaymsg -t get_outputs
-output HDMI-A-1 resolution 1920x1080 position 1920,0
+# You can get the names of your outputs by running: swaymsg 
+exec_always --no-startup-id xrandr --output DP-2 --primary --auto --output HDMI-0 --auto --right-of DP-2
+workspace 1 output DP-2
+workspace 2 output HDMI-0
 
-### Idle configuration
-#
-# Example configuration:
-#
-# exec swayidle -w \
-#          timeout 300 'swaylock -f -c 000000' \
-#          timeout 600 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
-#          before-sleep 'swaylock -f -c 000000'
-#
-# This will lock your screen after 300 seconds of inactivity, then turn off
-# your displays after another 300 seconds, and turn your screens back on when
-# resumed. It will also lock your screen before your computer goes to sleep.
-
-# You can get the names of your inputs by running: swaymsg -t get_inputs
-# Read `man 5 sway-input` for more information about this section.
-input "1739:52552:SYNA1D31:00_06CB:CD48_Touchpad" {
-    accel_profile "flat"
-    natural_scroll enabled
-    dwt disabled
-    tap enabled
-    middle_emulation enabled
-}
-
-input "4809:8195:SOAI_USB_Gaming_Mouse" {
-    accel_profile "flat"
-    pointer_accel "-0.5"
-}
+exec --no-startup-id ~/.config/i3/mouse.sh
 
 ### Key bindings
 #
@@ -70,7 +46,7 @@ input "4809:8195:SOAI_USB_Gaming_Mouse" {
     # Despite the name, also works for non-floating windows.
     # Change normal to inverse to use left mouse button for resizing and right
     # mouse button for dragging.
-    floating_modifier $mod normal
+    floating_modifier $mod
 
     # Reload the configuration file
     bindsym $mod+Shift+c reload
@@ -115,7 +91,7 @@ input "4809:8195:SOAI_USB_Gaming_Mouse" {
     bindsym $mod+8 workspace number 8
     bindsym $mod+9 workspace number 9
     bindsym $mod+0 workspace number 10
-	 bindsym $mod+F1 workspace "f1"
+    bindsym $mod+F1 workspace "f1"
     bindsym $mod+F2 workspace "f2"
     bindsym $mod+F3 workspace "f3"
     bindsym $mod+F4 workspace "f4"
@@ -137,7 +113,7 @@ input "4809:8195:SOAI_USB_Gaming_Mouse" {
     bindsym $mod+Shift+8 move container to workspace number 8
     bindsym $mod+Shift+9 move container to workspace number 9
     bindsym $mod+Shift+0 move container to workspace number 10
-	 bindsym $mod+Shift+F1 move container to workspace "f1"
+    bindsym $mod+Shift+F1 move container to workspace "f1"
     bindsym $mod+Shift+F2 move container to workspace "f2"
     bindsym $mod+Shift+F3 move container to workspace "f3"
     bindsym $mod+Shift+F4 move container to workspace "f4"
@@ -247,7 +223,7 @@ bar {
     # When the status_command prints a new line to stdout, swaybar updates.
     # The default just shows the current date and time.
     status_command i3status-rs
-    font JetBrainsMono 12
+    font pango:JetBrains Mono 16
     colors {
         background          $bg
         statusline          $sl
@@ -258,8 +234,6 @@ bar {
         urgent_workspace    $ac        $bg        $ac
     }
 }
-
-xwayland enable
 
 default_border none
 # keep borders in floating window mode only?
@@ -313,5 +287,5 @@ slurp | grim -g - "$path" && printf "%s" "$path" | wl-copy'
 # bindsym $mod+Ctrl+Shift+Mod1+Print exec wayrecorder --notify --clipboard --input window
 
 
-include /etc/sway/config.d/*
+# include /etc/sway/config.d/*
 

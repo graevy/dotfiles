@@ -74,23 +74,23 @@ interval = 10
 alert = 5.0
 format = "$icon$available.eng(w:2)"
 
-[[block]]
-block = "battery"
-format = "$icon$percentage"
-charging_format = "$icon$percentage"
-not_charging_format = "$icon$percentage"
-empty_format = "$icon$percentage"
-critical = 30
+# [[block]]
+# block = "battery"
+# format = "$icon$percentage"
+# charging_format = "$icon$percentage"
+# not_charging_format = "$icon$percentage"
+# empty_format = "$icon$percentage"
+# critical = 30
 
 [[block]]
 block = "sound"
 format = "$icon$volume"
 show_volume_when_muted = true
 
-[[block]]
-block = "backlight"
-format = "$icon$brightness.eng(w:2)"
-device = "intel_backlight"
+# [[block]]
+# block = "backlight"
+# format = "$icon$brightness.eng(w:2)"
+# device = "intel_backlight"
 
 #[[block]]
 #block = "custom"
