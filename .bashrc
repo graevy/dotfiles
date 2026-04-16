@@ -1,7 +1,3 @@
-#
-# ~/.bashrc
-#
-
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
@@ -125,7 +121,7 @@ nd() {
 }
 
 # :^)
-#troll() { ls $@ -Ad . ..; }
+#ls() { ls $@ -Ad . ..; }
 
 # https://direnv.net/docs/hook.html
 eval "$(direnv hook bash)"
