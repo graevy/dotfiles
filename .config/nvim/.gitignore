@@ -3,7 +3,6 @@
 !.gitignore
 
 !init.lua
-!lazyvim.json
 !lazy-lock.json
 
 !lua

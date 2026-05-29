@@ -15,6 +15,7 @@ cs() { cd "$1" && la "${@:2}"; }
 complete -F _cd cs # complete cs like cd
 mkcd() { mkdir -p $1 && cd $1; }
 cdt() { cd $(mktemp -d); }
+alias sue='sudo -E bash'
 please() { sudo $(fc -ln -1); }
 rmv() { mv "$@" /tmp; }
 rmtmp() { sudo rm -rf /tmp/* /tmp/.*; }
