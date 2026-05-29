@@ -24,7 +24,7 @@ replace() {
   find "${3:-.}" -type f -print0 | xargs -0 sed -i "s|$1|${2//&/\\&}|g"
 }
 # pull all nested files into $1 (defaults to .)
-# duplicate files don't get moved nor their dirs deleted (with mv -n)
+# duplicate filenames don't get moved nor their dirs deleted (with mv -n)
 flatten() {
   find "${1:-.}" -mindepth 2 -type f -exec mv -n -t . {} +
   find "${1:-.}" -mindepth 1 -type d -empty -delete
@@ -35,8 +35,8 @@ alias n='nvim'
 alias v='vim'
 alias k='kubectl'
 alias py='python'
-alias wlc='wl-copy'
-alias wlp='wl-paste'
+alias xlc='xclip -sel c'
+alias xlp='xclip -sel c -o'
 
 # esoteric tooling
 alias freeze='su -c "echo freeze > /sys/power/state"'
@@ -109,7 +109,7 @@ kkill() {
 }
 
 ######### nix/os tooling #########
-rebuild() { su -c "nixos-rebuild switch --flake $@"; }
+rebuild() { su -c "nixos-rebuild switch --flake /etc/nixos/ $@"; }
 nixnix() { su -c "nix-env --delete-generations +$@ --profile /nix/var/nix/profiles/system"; }
 
 ns() { nix-shell -p "$@"; }
@@ -122,6 +122,10 @@ nd() {
 
 # :^)
 #ls() { ls $@ -Ad . ..; }
+
+######### environments #########
+# TODO sops-nix
+source ~/secrets/env
 
 # https://direnv.net/docs/hook.html
 eval "$(direnv hook bash)"
