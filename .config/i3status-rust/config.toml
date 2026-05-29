@@ -33,7 +33,8 @@ hide_when_empty = true
 [[block]]
 block = "net"
 # format = "$icon{$signal_strength$frequency $ip}"
-format = "$icon{$signal_strength $ip}"
+# format = "$icon{$signal_strength $ip}"
+format = "$icon $ip"
 inactive_format = "$icon Down"
 interval = 3
 
