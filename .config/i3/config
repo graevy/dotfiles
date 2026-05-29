@@ -23,7 +23,7 @@ set $menu dmenu_run
 
 # You can get the names of your outputs by running: swaymsg 
 exec_always --no-startup-id xrandr --output DP-0 --primary --auto --output HDMI-0 --auto --right-of DP-0
-workspace 1 output DP-2
+workspace 1 output DP-0
 workspace 2 output HDMI-0
 
 exec --no-startup-id ~/.config/i3/mouse.sh
