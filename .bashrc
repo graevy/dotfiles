@@ -7,22 +7,75 @@ PS1='[\u\w]\$ '
 # bash "improvements"
 alias la='ls -ah --color=auto'
 alias l='ls -lahr --color=auto'
+
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
 alias .....='cd ../../../..'
 cs() { cd "$1" && la "${@:2}"; }
 complete -F _cd cs # complete cs like cd
+
 mkcd() { mkdir -p $1 && cd $1; }
 cdt() { cd $(mktemp -d); }
+
+alias sue='sudo -E bash'
 please() { sudo $(fc -ln -1); }
-rmv() { mv "$@" /tmp; }
+
+# move things to /tmp instead of deleting them. maintain a log for undoing 
+rmv() {
+    local f src dest base ext suffix
+
+    for f in "$@"; do
+        src="$(realpath -- "$f" 2>/dev/null)" || { printf 'rmv: %s: no such file or directory\n' "$f" >&2; continue; }
+
+        base="$(basename -- "$f")"
+        dest="/tmp/$base"
+
+        # suffix for overwrite case. check for suffix existence and append if necessary
+        if [[ -e "$dest" ]]; then
+            suffix=1
+            while [[ -e "${dest}.${suffix}" ]]; do (( suffix++ )); done
+            dest="${dest}.${suffix}"
+        fi
+
+        mv -- "$f" "$dest" || continue
+		  # append to log
+        printf '%s\t%s\n' "$dest" "$src" >> /tmp/rmv.log
+    done
+}
+
+# undo deletion via the log
+urmv() {
+    local log=/tmp/rmv.log
+    local dest src lastline
+
+    [[ -f "$log" ]] || { printf 'urmv: log not found\n' >&2; return 1; }
+    [[ -s "$log" ]] || { printf 'urmv: nothing to undo\n' >&2; return 1; }
+
+    lastline="$(tail -n 1 "$log")"
+    dest="${lastline%%$'\t'*}"   # location inside /tmp
+    src="${lastline##*$'\t'}"    # original location
+
+    [[ -e "$dest" ]] || { printf 'urmv: %s: no longer in /tmp\n' "$dest" >&2; return 1; }
+
+	 # just panic for the overwrite case
+    if [[ -e "$src" ]]; then
+        printf 'urmv: destination already exists, aborting: %s\n' "$src" >&2
+        return 1
+    fi
+
+    mkdir -p -- "$(dirname -- "$src")" || return 1
+    mv -- "$dest" "$src" && sed -i '$d' "$log"
+}
+
 rmtmp() { sudo rm -rf /tmp/* /tmp/.*; }
+
 # finds-and-replaces all instances of $1 with $2 inside files inside $3 (defaults to current dir)
 # the complicated replace block is to escape & in sed which is treated as matched text i think
 replace() {
   find "${3:-.}" -type f -print0 | xargs -0 sed -i "s|$1|${2//&/\\&}|g"
 }
+
 # pull all nested files into $1 (defaults to .)
 # duplicate files don't get moved nor their dirs deleted (with mv -n)
 flatten() {
@@ -30,16 +83,16 @@ flatten() {
   find "${1:-.}" -mindepth 1 -type d -empty -delete
 }
 
-# common shortcuts
+alias freeze='su -c "echo freeze > /sys/power/state"'
+
+
+# tooling
 alias n='nvim'
 alias v='vim'
 alias k='kubectl'
 alias py='python'
 alias wlc='wl-copy'
 alias wlp='wl-paste'
-
-# esoteric tooling
-alias freeze='su -c "echo freeze > /sys/power/state"'
 alias rescan='nmcli d wifi list --rescan yes'
 alias wttr='curl -s wttr.in/seattle'
 # deprecated; keeping for ytdlp documentation
@@ -49,6 +102,7 @@ alias ytdla="yt-dlp -x --audio-format opus --add-metadata -o '%(title)s.%(ext)s'
 ish() { ssh -o StrictHostKeyChecking=no "$@"; }
 icp() { scp -o StrictHostKeyChecking=no "$@"; }
 irc() { irssi -n ${NICKNAME:-$USER}; }
+
 # sed debugger
 sedd() {
   tf=$(mktemp)
@@ -64,6 +118,7 @@ sedd() {
   } >&2
   rm $tf
 }
+
 # silent neovim; attempt to not disturb mtime
 svi() {
   local file="$1"
