@@ -89,6 +89,7 @@ alias freeze='su -c "echo freeze > /sys/power/state"'
 # tooling
 alias n='nvim'
 alias v='vim'
+alias vi='nvim'
 alias k='kubectl'
 alias py='python'
 alias wlc='wl-copy'
