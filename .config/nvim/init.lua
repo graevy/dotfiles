@@ -239,12 +239,12 @@ vim.api.nvim_create_autocmd("LspAttach", {
     -- omnifunc, keymaps, and inlay hints
     vim.bo[buffer].omnifunc = "v:lua.vim.lsp.omnifunc"
 
-    if client and client.supports_method("textDocument/inlayHint") then
+    if client and client:supports_method("textDocument/inlayHint") then
       vim.lsp.inlay_hint.enable(true, { bufnr = buffer })
     end
 
     -- document highlight logic
-    if client and client.supports_method("textDocument/documentHighlight") then
+    if client and client:supports_method("textDocument/documentHighlight") then
       local group = vim.api.nvim_create_augroup("LspHighlight", { clear = false })
       vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
         buffer = buffer, group = group, callback = vim.lsp.buf.document_highlight,
