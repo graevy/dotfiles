@@ -24,6 +24,7 @@ please() { sudo $(fc -ln -1); }
 # move things to /tmp instead of deleting them. maintain a log for undoing 
 rmv() {
     local f src dest base ext suffix
+	 local log="/tmp/rmv-${UID}.log"
 
     for f in "$@"; do
         src="$(realpath -- "$f" 2>/dev/null)" || { printf 'rmv: %s: no such file or directory\n' "$f" >&2; continue; }
@@ -40,13 +41,13 @@ rmv() {
 
         mv -- "$f" "$dest" || continue
 		  # append to log
-        printf '%s\t%s\n' "$dest" "$src" >> /tmp/rmv.log
+        printf '%s\t%s\n' "$dest" "$src" >> "$log"
     done
 }
 
 # undo deletion via the log
 urmv() {
-    local log=/tmp/rmv.log
+    local log="/tmp/rmv-${UID}.log"
     local dest src lastline
 
     [[ -f "$log" ]] || { printf 'urmv: log not found\n' >&2; return 1; }
