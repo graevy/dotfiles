@@ -86,8 +86,9 @@ local nmap = function(mode, keys, func, desc)
   vim.keymap.set(mode, keys, func, { desc = desc, noremap = true, silent = true })
 end
 
--- honestly just bind Q to q with how often i press :Q
+-- always doing this
 api.nvim_create_user_command('Q', 'q', { bang = true })
+api.nvim_create_user_command('W', 'w', { bang = true })
 
 -- vscode hotkeys basically
 nmap("v", "<Tab>", ">gv", "Indent Block")

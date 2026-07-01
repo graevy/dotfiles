@@ -101,7 +101,8 @@ alias wttr='curl -s wttr.in/seattle'
 #"youtube-dl -f bestaudio --audio-quality 0 --embed-thumbnail -x --audio-format mp3 --add-metadata -o '%(title)s.%(ext)s'"
 alias ytdlv="yt-dlp -f bestaudio --add-metadata -o '%(title)s.%(ext)s'"
 alias ytdla="yt-dlp -x --audio-format opus --add-metadata -o '%(title)s.%(ext)s'"
-ish() { ssh -o StrictHostKeyChecking=no "$@"; }
+# "insecure shell", TERM for alacritty
+ish() { TERM=xterm-256color ssh -o StrictHostKeyChecking=no "$@"; }
 icp() { scp -o StrictHostKeyChecking=no "$@"; }
 irc() { irssi -n ${NICKNAME:-$USER}; }
 
@@ -129,6 +130,16 @@ svi() {
   touch -d "$ts" "$file"
 }
 
+# leaving this (homebrew native) pattern here for when i inevitably do frontend things
+# https://mijndertstuij.nl/posts/life-is-too-short-for-a-slow-terminal/
+# export NVM_DIR="$HOME/.nvm"
+# nvm() {
+#   unset -f nvm
+#   [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh" --no-use
+#   [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+#   nvm "$@"
+# }
+
 ######### git tooling #########
 alias s='git status'
 alias d='git diff'
@@ -153,7 +164,7 @@ alias kcore='KUBECONFIG=~/.kube/coreconfig'
 alias kmem='KUBECONFIG=~/.kube/memberprodconfig'
 # what `kubectl get all` should be. i don't want to see events though
 kgetall() {
-  kubectl get $(kubectl api-resources --verbs=list --namespaced -o name | grep -v "^events" | paste -sd,) --show-kind --ignore-not-found "$@"
+  kubectl get $(kubectl api-resources --verbs=list --namespaced -o name | grep -iv "^events" | paste -sd,) --show-kind --ignore-not-found "$@"
 }
 # remove finalizers from object
 kkill() {
