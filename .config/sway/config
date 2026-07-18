@@ -22,7 +22,7 @@ set $menu dmenu_path | wmenu | xargs swaymsg exec --
 output * bg background.png tile
 
 # You can get the names of your outputs by running: swaymsg -t get_outputs
-output HDMI-A-1 resolution 1920x1080 position 1920,0
+output HDMI-A-1 resolution 3840x2160 position 3840,0
 
 ### Idle configuration
 #
@@ -247,7 +247,7 @@ bar {
     # When the status_command prints a new line to stdout, swaybar updates.
     # The default just shows the current date and time.
     status_command i3status-rs
-    font JetBrainsMono 12
+    font JetBrainsMono 24
     colors {
         background          $bg
         statusline          $sl

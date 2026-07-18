@@ -1,7 +1,7 @@
 
 [font]
 normal = { family = "JetBrains Mono", style = "Regular" }
-size = 14
+size = 24
 
 [general]
 live_config_reload = true
