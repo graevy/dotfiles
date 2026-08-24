@@ -102,7 +102,7 @@ alias wttr='curl -s wttr.in/seattle'
 alias ytdlv="yt-dlp -f bestaudio --add-metadata -o '%(title)s.%(ext)s'"
 alias ytdla="yt-dlp -x --audio-format opus --add-metadata -o '%(title)s.%(ext)s'"
 # "insecure shell", TERM for alacritty
-ish() { TERM=xterm-256color ssh -o StrictHostKeyChecking=no "$@"; }
+ish() { TERM=xterm-256color ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "$@"; }
 icp() { scp -o StrictHostKeyChecking=no "$@"; }
 irc() { irssi -n ${NICKNAME:-$USER}; }
 
@@ -160,7 +160,7 @@ c() {
 complete -o default -o filenames commit
 
 ######### k8s tooling #########
-alias kcore='KUBECONFIG=~/.kube/coreconfig'
+alias kcore='KUBECONFIG=~/.kube/oldcoreconfig'
 alias kmem='KUBECONFIG=~/.kube/memberprodconfig'
 # what `kubectl get all` should be. i don't want to see events though
 kgetall() {
@@ -188,8 +188,40 @@ nd() {
 	nix develop
 }
 
+######## gocryptfs fuse dir ########
+crypt() {
+  local cipher="$HOME/crypt.cipher"
+  local plain="$HOME/crypt"
+
+  mkdir -p "$cipher" "$plain"
+
+  if [ ! -f "$cipher/gocryptfs.conf" ]; then
+    echo "Failed to find $cipher/gocryptfs.conf. Run `gocryptfs -init` inside $cipher and rerun."
+    return 0
+  fi
+
+  if mountpoint -q "$plain"; then
+    echo "$plain is already mounted."
+    return 0
+  fi
+
+  gocryptfs "$cipher" "$plain"
+}
+
+decrypt() {
+  local plain="$HOME/crypt"
+
+  if ! mountpoint -q "$plain"; then
+    echo "$plain is not mounted."
+    return 0
+  fi
+
+  fusermount -u "$plain"
+  echo "Unmounted $plain."
+}
+
 # :^)
-#ls() { ls $@ -Ad . ..; }
+# ls() { ls $@ -Ad . ..; }
 
 # https://direnv.net/docs/hook.html
 eval "$(direnv hook bash)"
