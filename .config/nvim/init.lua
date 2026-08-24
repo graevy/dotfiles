@@ -122,6 +122,7 @@ nmap({ "n", "v", "i" }, "<M-E>", function()
   "Toggle Neotree"
 )
 nmap({ "n", "v", "i" }, "<M-D>", function() require("dapui").toggle() end, "Toggle DAP (Debugging) UI")
+nmap({ "n", "v" }, "<M-M>", function() cmd("RenderMarkdown toggle") end, "Toggle render-markdown.nvim mode")
 
 -- toggle lint display. lualine still lists warnings/errors/etc. i disable the linting by default down below
 nmap({ "n", "v", "i" }, "<M-L>",
