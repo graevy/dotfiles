@@ -160,8 +160,9 @@ c() {
 complete -o default -o filenames commit
 
 ######### k8s tooling #########
-alias kcore='KUBECONFIG=~/.kube/oldcoreconfig'
-alias kmem='KUBECONFIG=~/.kube/memberprodconfig'
+alias kcore='KUBECONFIG=~/crypt/kube/oldcoreconfig'
+alias kmem='KUBECONFIG=~/crypt/kube/memberprodconfig'
+export BAO_ADDR='https://bao.devhack.net'
 # what `kubectl get all` should be. i don't want to see events though
 kgetall() {
   kubectl get $(kubectl api-resources --verbs=list --namespaced -o name | grep -iv "^events" | paste -sd,) --show-kind --ignore-not-found "$@"
@@ -177,7 +178,7 @@ kkill() {
 }
 
 ######### nix/os tooling #########
-rebuild() { su -c "nixos-rebuild switch --flake $@"; }
+rebuild() { su -c "nixos-rebuild switch --flake path:/etc/nixos $@"; }
 nixnix() { su -c "nix-env --delete-generations +$@ --profile /nix/var/nix/profiles/system"; }
 
 ns() { nix-shell -p "$@"; }
