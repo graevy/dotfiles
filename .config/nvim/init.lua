@@ -104,7 +104,7 @@ nmap({ "n", "v", "i" }, "<F7>", function() require('dap').run_last() end, "LSP: 
 nmap({ "n", "v", "i" }, "<F10>", function() require('dap').step_over() end, "LSP: Step Over")
 nmap({ "n", "v", "i" }, "<F11>", function() require('dap').step_into() end, "LSP: Step Into")
 nmap({ "n", "v", "i" }, "<F12>", function() require('dap').step_out() end, "LSP: Step Out")
-nmap({ "n", "v" }, "B", function() require('dap').toggle_breakpoint() end, "Toggle Breakpoint")
+nmap({ "n", "v" }, "<M-B>", function() require('dap').toggle_breakpoint() end, "Toggle Breakpoint")
 
 -- nav keybinds; GOTOs. vim Ctrl+O natively returns to previous cursor position
 nmap({ "n", "v" }, "gd", lsp.buf.definition, "LSP: GoTo Definition")
