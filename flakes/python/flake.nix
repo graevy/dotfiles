@@ -10,14 +10,14 @@
     flake-utils.lib.eachDefaultSystem (system: {
       devShells.default = nixpkgs.legacyPackages.${system}.mkShell {
         buildInputs = with nixpkgs.legacyPackages.${system}; [
-          python313
-          python313Packages.python-lsp-server
-			 python313Packages.pylint
-          python313Packages.black
-          python313Packages.isort
-          python313Packages.mypy
-          python313Packages.pytest
-          python313Packages.ipython
+          python314
+          python314Packages.python-lsp-server
+			 python314Packages.pylint
+          python314Packages.black
+          python314Packages.isort
+          python314Packages.mypy
+          python314Packages.pytest
+          python314Packages.ipython
         ];
       };
     });

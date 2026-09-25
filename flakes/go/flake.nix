@@ -13,7 +13,7 @@
           gcc 
         ];
         buildInputs = with nixpkgs.legacyPackages.${system}; [
-          go_1_25
+          go_1_26
           gopls
           delve
           protobuf
