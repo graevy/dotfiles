@@ -20,3 +20,5 @@
 !flakes
 !flakes/**
 
+!scripts
+!scripts/**
