@@ -97,12 +97,14 @@ alias wlc='wl-copy'
 alias wlp='wl-paste'
 alias rescan='nmcli d wifi list --rescan yes'
 alias wttr='curl -s wttr.in/seattle'
-# deprecated; keeping for ytdlp documentation
-#"youtube-dl -f bestaudio --audio-quality 0 --embed-thumbnail -x --audio-format mp3 --add-metadata -o '%(title)s.%(ext)s'"
 alias ytdlv="yt-dlp -f bestaudio --add-metadata -o '%(title)s.%(ext)s'"
 alias ytdla="yt-dlp -x --audio-format opus --add-metadata -o '%(title)s.%(ext)s'"
+
 # "insecure shell", TERM for alacritty
-ish() { TERM=xterm-256color ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "$@"; }
+ish() {
+  TERM=xterm-256color ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "$@" \
+  2> >(grep -v '^Warning: Permanently added' >&2)
+} 
 icp() { scp -o StrictHostKeyChecking=no "$@"; }
 irc() { irssi -n ${NICKNAME:-$USER}; }
 
@@ -161,6 +163,7 @@ complete -o default -o filenames commit
 
 ######### k8s tooling #########
 alias kcore='KUBECONFIG=~/crypt/kube/oldcoreconfig'
+alias knew='KUBECONFIG=~/crypt/kube/newcoreconfig'
 alias kmem='KUBECONFIG=~/crypt/kube/memberprodconfig'
 export BAO_ADDR='https://bao.devhack.net'
 # what `kubectl get all` should be. i don't want to see events though
