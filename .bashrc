@@ -200,8 +200,8 @@ crypt() {
   mkdir -p "$cipher" "$plain"
 
   if [ ! -f "$cipher/gocryptfs.conf" ]; then
-    echo "Failed to find $cipher/gocryptfs.conf. Run `gocryptfs -init` inside $cipher and rerun."
-    return 0
+    echo "Failed to find $cipher/gocryptfs.conf. Run 'gocryptfs -init' inside $cipher and rerun."
+    return 1
   fi
 
   if mountpoint -q "$plain"; then
@@ -214,14 +214,23 @@ crypt() {
 
 decrypt() {
   local plain="$HOME/crypt"
+  local out
 
   if ! mountpoint -q "$plain"; then
     echo "$plain is not mounted."
     return 0
   fi
 
-  fusermount -u "$plain"
-  echo "Unmounted $plain."
+  if out=$(fusermount -u "$plain" 2>&1); then
+    echo "Unmounted $plain."
+  else
+    echo "Failed to unmount $plain: $out" >&2
+    if [[ "$out" == *busy* ]]; then
+      echo "Processes using it:" >&2
+      fuser -vm "$plain" 2>&1 >&2
+    fi
+    return 1
+  fi
 }
 
 # :^)
