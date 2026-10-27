@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-if [[ $EUID -ne 0 ]]; then
-    echo "This script must be run as root." >&2
+if [[ $# -lt 1 ]]; then
+    echo "Usage: $0 <interface>" >&2
     exit 1
 fi
 
@@ -29,4 +29,3 @@ fi
 
 echo "Found PiKVM at ${PIKVM_ADDR}%${IFACE}, connecting..."
 exec ssh "root@${PIKVM_ADDR}%${IFACE}"
-
